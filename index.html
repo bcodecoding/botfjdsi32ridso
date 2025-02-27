@@ -20,7 +20,6 @@
             -webkit-touch-callout: none !important;
             -webkit-user-select: none !important;
             user-select: none !important;
-            outline: none !important;
         }
 
         body {
@@ -35,20 +34,6 @@
             max-width: 500px;
             margin: 0 auto;
             padding: 20px;
-            padding-bottom: 180px;
-        }
-
-        .header {
-            text-align: center;
-            padding: 20px 0;
-            margin-bottom: 20px;
-        }
-
-        .header h1 {
-            font-size: 32px;
-            font-weight: 700;
-            color: var(--accent-color);
-            text-shadow: 0 0 10px rgba(140, 82, 255, 0.3);
         }
 
         .clicker-container {
@@ -68,81 +53,48 @@
             font-size: 24px;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.2s;
             box-shadow: 0 0 30px rgba(140, 82, 255, 0.3);
-            position: relative;
-            overflow: hidden;
+            transition: transform 0.1s;
         }
 
         .click-button:active {
             transform: scale(0.95);
-            box-shadow: 0 0 20px rgba(140, 82, 255, 0.2);
-        }
-
-        .click-ripple {
-            position: absolute;
-            background: rgba(255, 255, 255, 0.7);
-            border-radius: 50%;
-            pointer-events: none;
-            transform: scale(0);
-            animation: ripple 0.6s linear;
-        }
-
-        @keyframes ripple {
-            to {
-                transform: scale(4);
-                opacity: 0;
-            }
         }
 
         .stats-container {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 15px;
-            margin: 30px 0;
+            margin-bottom: 30px;
         }
 
         .stat-card {
             background: var(--card-bg);
-            padding: 20px;
-            border-radius: 20px;
+            padding: 15px;
+            border-radius: 15px;
             text-align: center;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-2px);
         }
 
         .stat-card h3 {
             font-size: 14px;
-            color: #888;
-            margin-bottom: 8px;
+            opacity: 0.8;
+            margin-bottom: 5px;
         }
 
-        .stat-card .value {
-            font-size: 24px;
+        .value {
+            font-size: 20px;
             font-weight: 700;
             color: var(--accent-color);
-        }
-
-        .upgrades-container {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 15px;
-            margin-top: 30px;
-            margin-bottom: 20px;
         }
 
         .upgrade-button {
             width: 100%;
             margin-bottom: 10px;
             padding: 15px;
-            background: #2a2a2a;
+            background: var(--card-bg);
             border: none;
             border-radius: 15px;
-            color: #fff;
+            color: var(--tg-theme-text-color);
             font-size: 16px;
             display: flex;
             justify-content: space-between;
@@ -154,18 +106,41 @@
             transform: scale(0.98);
         }
 
-        .upgrade-button .cost {
-            color: var(--accent-color);
-            font-weight: 700;
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .menu-button {
+            background: var(--card-bg);
+            border: none;
+            border-radius: 15px;
+            padding: 15px;
+            color: var(--tg-theme-text-color);
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .menu-button:active {
+            transform: scale(0.95);
+            background: #3a3a3a;
         }
 
         .floating-coins {
-            position: absolute;
+            position: fixed;
             pointer-events: none;
+            animation: float-up 1s ease-out forwards;
             font-size: 20px;
             font-weight: bold;
-            color: var(--accent-color);
-            animation: float-up 1s ease-out forwards;
+            color: gold;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
 
         @keyframes float-up {
@@ -178,75 +153,12 @@
                 opacity: 0;
             }
         }
-
-        .menu-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-top: 30px;
-        }
-
-        .menu-button {
-            background: var(--card-bg);
-            border: none;
-            border-radius: 20px;
-            padding: 20px;
-            color: var(--tg-theme-text-color);
-            font-size: 16px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .menu-button:hover {
-            transform: translateY(-2px);
-            background: #3a3a3a;
-        }
-
-        /* Стили для кнопок меню */
-        .bottom-menu {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            padding: 15px;
-            background: var(--tg-theme-bg-color);
-            z-index: 100;
-        }
-
-        .menu-button {
-            background: #2a2a2a;
-            border: none;
-            border-radius: 15px;
-            padding: 15px;
-            color: #fff;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .menu-button:active {
-            transform: scale(0.95);
-            background: #3a3a3a;
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>🐹 Hampire</h1>
-        </div>
-
         <div class="clicker-container">
-            <button class="click-button" id="click-btn">
+            <button id="click-btn" class="click-button">
                 🐹 КЛИК!
             </button>
         </div>
@@ -270,31 +182,20 @@
             </div>
         </div>
 
-        <div class="upgrades-container">
-            <button class="upgrade-button" id="upgrade-click">
-                <span>⚔️ Улучшить силу клика</span>
-                <span class="cost">10 💰</span>
-            </button>
-            <button class="upgrade-button" id="upgrade-passive">
-                <span>📈 Улучшить пассивный доход</span>
-                <span class="cost">25 💰</span>
-            </button>
-        </div>
+        <button id="upgrade-click" class="upgrade-button">
+            <span>⚔️ Улучшить силу клика</span>
+            <span class="cost">10 💰</span>
+        </button>
+        <button id="upgrade-passive" class="upgrade-button">
+            <span>📈 Улучшить пассивный доход</span>
+            <span class="cost">25 💰</span>
+        </button>
 
-        <!-- Обновленное меню -->
-        <div class="bottom-menu">
-            <button class="menu-button" id="referral-btn">
-                👥 Рефералы
-            </button>
-            <button class="menu-button" id="tasks-btn">
-                📋 Задания
-            </button>
-            <button class="menu-button" id="shop-btn">
-                🛍 Магазин
-            </button>
-            <button class="menu-button" id="stats-btn">
-                📊 Статистика
-            </button>
+        <div class="menu-grid">
+            <button class="menu-button" id="referral-btn">👥 Рефералы</button>
+            <button class="menu-button" id="tasks-btn">📋 Задания</button>
+            <button class="menu-button" id="shop-btn">🛍 Магазин</button>
+            <button class="menu-button" id="stats-btn">📊 Статистика</button>
         </div>
     </div>
 
@@ -315,28 +216,70 @@
             },
             referrals: [],
             completedTasks: [],
-            startTime: Date.now()
+            lastSave: Date.now()
         };
 
-        // Загрузка сохраненных данных
-        try {
-            const savedData = localStorage.getItem('playerData');
-            if (savedData) {
-                player = JSON.parse(savedData);
+        // Загрузка данных при старте
+        async function initializePlayer() {
+            try {
+                // Запрашиваем данные у бота
+                tg.sendData(JSON.stringify({
+                    action: 'load_data',
+                    userId: tg.initDataUnsafe?.user?.id
+                }));
+
+                // Ждем ответа от бота
+                const savedData = localStorage.getItem('playerData');
+                if (savedData) {
+                    const localData = JSON.parse(savedData);
+                    // Используем более новые данные
+                    if (localData.lastSave > player.lastSave) {
+                        player = localData;
+                    }
+                }
+            } catch (e) {
+                console.error('Ошибка загрузки данных:', e);
             }
-        } catch (e) {
-            console.error('Ошибка загрузки данных:', e);
+            updateUI();
         }
 
-        // Обновляем обработчики меню
+        // Функция сохранения с синхронизацией
+        function saveData() {
+            try {
+                player.lastSave = Date.now();
+                localStorage.setItem('playerData', JSON.stringify(player));
+                
+                // Отправляем данные боту для сохранения
+                tg.sendData(JSON.stringify({
+                    action: 'save_data',
+                    userId: tg.initDataUnsafe?.user?.id,
+                    data: player
+                }));
+                
+                console.log('Данные сохранены:', player);
+            } catch (e) {
+                console.error('Ошибка сохранения:', e);
+            }
+        }
+
+        // Автосохранение каждые 10 секунд
+        setInterval(saveData, 10000);
+
+        // Сохранение перед закрытием страницы
+        window.addEventListener('beforeunload', saveData);
+
+        // Инициализация при загрузке
+        initializePlayer();
+
+        // Обработчики меню
         document.getElementById('referral-btn').addEventListener('click', function() {
-            tg.MainButton.text = "Закрыть рефералы";
-            tg.MainButton.show();
-            tg.MainButton.onClick(function(){
-                tg.MainButton.hide();
+            tg.showPopup({
+                title: '👥 Реферальная система',
+                message: 'Загрузка данных...',
+                buttons: [{type: 'close'}]
             });
             
-            tg.WebApp.sendData(JSON.stringify({
+            tg.sendData(JSON.stringify({
                 action: 'referral',
                 userId: tg.initDataUnsafe?.user?.id,
                 data: {
@@ -348,129 +291,55 @@
         });
 
         document.getElementById('tasks-btn').addEventListener('click', function() {
-            tg.MainButton.text = "Закрыть задания";
-            tg.MainButton.show();
-            tg.MainButton.onClick(function(){
-                tg.MainButton.hide();
+            tg.showPopup({
+                title: '📋 Задания',
+                message: 'Загрузка заданий...',
+                buttons: [{type: 'close'}]
             });
             
-            const tasks = [
-                {
-                    id: 1,
-                    name: "Набрать 1000 кликов",
-                    completed: player.totalClicks >= 1000,
-                    reward: 500
-                },
-                {
-                    id: 2,
-                    name: "Накопить 10000 монет",
-                    completed: player.coins >= 10000,
-                    reward: 1000
-                },
-                {
-                    id: 3,
-                    name: "Пригласить 3 друзей",
-                    completed: player.referrals.length >= 3,
-                    reward: 2000
-                },
-                {
-                    id: 4,
-                    name: "Улучшить силу клика до 10",
-                    completed: player.clickPower >= 10,
-                    reward: 1500
-                },
-                {
-                    id: 5,
-                    name: "Получить пассивный доход 5/сек",
-                    completed: player.passiveIncome >= 5,
-                    reward: 3000
-                }
-            ];
-
-            tg.WebApp.sendData(JSON.stringify({
+            tg.sendData(JSON.stringify({
                 action: 'tasks',
                 userId: tg.initDataUnsafe?.user?.id,
                 data: {
-                    tasks: tasks,
-                    completedTasks: player.completedTasks,
-                    totalTasks: tasks.length
+                    totalClicks: player.totalClicks,
+                    coins: player.coins,
+                    clickPower: player.clickPower,
+                    passiveIncome: player.passiveIncome,
+                    completedTasks: player.completedTasks
                 }
             }));
         });
 
         document.getElementById('shop-btn').addEventListener('click', function() {
-            tg.MainButton.text = "Закрыть магазин";
-            tg.MainButton.show();
-            tg.MainButton.onClick(function(){
-                tg.MainButton.hide();
+            tg.showPopup({
+                title: '🛍 Магазин',
+                message: 'Загрузка товаров...',
+                buttons: [{type: 'close'}]
             });
             
-            const shopItems = [
-                {
-                    id: 1,
-                    name: "100 алмазов",
-                    price: "50 рублей",
-                    coins: 10000
-                },
-                {
-                    id: 2,
-                    name: "500 алмазов",
-                    price: "200 рублей",
-                    coins: 60000
-                },
-                {
-                    id: 3,
-                    name: "1200 алмазов",
-                    price: "400 рублей",
-                    coins: 150000
-                },
-                {
-                    id: 4,
-                    name: "VIP статус",
-                    price: "1000 рублей",
-                    perks: ["x2 монет", "x2 пассивный доход", "Уникальный значок"]
-                }
-            ];
-
-            tg.WebApp.sendData(JSON.stringify({
+            tg.sendData(JSON.stringify({
                 action: 'shop',
-                userId: tg.initDataUnsafe?.user?.id,
-                data: {
-                    items: shopItems,
-                    userCoins: player.coins
-                }
+                userId: tg.initDataUnsafe?.user?.id
             }));
         });
 
         document.getElementById('stats-btn').addEventListener('click', function() {
-            tg.MainButton.text = "Закрыть статистику";
-            tg.MainButton.show();
-            tg.MainButton.onClick(function(){
-                tg.MainButton.hide();
+            tg.showPopup({
+                title: '📊 Статистика',
+                message: 'Загрузка статистики...',
+                buttons: [{type: 'close'}]
             });
             
-            const stats = {
-                totalClicks: player.totalClicks,
-                coins: player.coins,
-                clickPower: player.clickPower,
-                passiveIncome: player.passiveIncome,
-                clicksToday: player.clicksToday,
-                maxClicks: player.maxClicks,
-                referrals: player.referrals.length,
-                completedTasks: player.completedTasks.length,
-                totalUpgrades: player.upgrades.click_power + player.upgrades.passive_income - 2,
-                playTime: Math.floor((Date.now() - player.startTime || Date.now()) / 1000 / 60),
-                achievements: {
-                    clicks: getClickAchievementLevel(player.totalClicks),
-                    coins: getCoinAchievementLevel(player.coins),
-                    referrals: getReferralAchievementLevel(player.referrals.length)
-                }
-            };
-
-            tg.WebApp.sendData(JSON.stringify({
+            tg.sendData(JSON.stringify({
                 action: 'stats',
                 userId: tg.initDataUnsafe?.user?.id,
-                data: stats
+                data: {
+                    coins: player.coins,
+                    clickPower: player.clickPower,
+                    passiveIncome: player.passiveIncome,
+                    totalClicks: player.totalClicks,
+                    clicksToday: player.clicksToday
+                }
             }));
         });
 
@@ -571,73 +440,6 @@
             document.querySelector('#upgrade-click .cost').textContent = `${clickCost} 💰`;
             document.querySelector('#upgrade-passive .cost').textContent = `${passiveCost} 💰`;
         }
-
-        // Улучшенное сохранение данных
-        function saveData() {
-            try {
-                localStorage.setItem('playerData', JSON.stringify(player));
-                console.log('Данные сохранены:', player);
-            } catch (e) {
-                console.error('Ошибка сохранения:', e);
-            }
-        }
-
-        // Более частое автосохранение
-        setInterval(saveData, 10000);
-
-        // Пассивный доход
-        setInterval(() => {
-            if (player.passiveIncome > 0) {
-                player.coins += player.passiveIncome;
-                updateUI();
-                saveData();
-            }
-        }, 1000);
-
-        // Сброс дневного лимита кликов
-        function resetDailyClicks() {
-            const now = new Date();
-            const lastReset = localStorage.getItem('lastClickReset');
-            if (!lastReset || (now - new Date(lastReset)) >= 8 * 60 * 60 * 1000) {
-                player.clicksToday = 0;
-                localStorage.setItem('lastClickReset', now.toISOString());
-                updateUI();
-                saveData();
-            }
-        }
-
-        // Проверяем сброс кликов каждую минуту
-        setInterval(resetDailyClicks, 60000);
-        resetDailyClicks(); // Проверяем при загрузке
-
-        // Вспомогательные функции для достижений
-        function getClickAchievementLevel(clicks) {
-            if (clicks >= 10000) return "Легенда";
-            if (clicks >= 5000) return "Мастер";
-            if (clicks >= 1000) return "Профи";
-            if (clicks >= 100) return "Новичок";
-            return "Начинающий";
-        }
-
-        function getCoinAchievementLevel(coins) {
-            if (coins >= 1000000) return "Миллионер";
-            if (coins >= 100000) return "Богач";
-            if (coins >= 10000) return "Состоятельный";
-            if (coins >= 1000) return "Обеспеченный";
-            return "Бедняк";
-        }
-
-        function getReferralAchievementLevel(referrals) {
-            if (referrals >= 20) return "Лидер";
-            if (referrals >= 10) return "Популярный";
-            if (referrals >= 5) return "Общительный";
-            if (referrals >= 1) return "Дружелюбный";
-            return "Одиночка";
-        }
-
-        // Инициализация
-        tg.ready();
-        updateUI();
     </script>
 </body>
 </html>
