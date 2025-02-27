@@ -314,7 +314,8 @@
                 passive_income: 0
             },
             referrals: [],
-            completedTasks: []
+            completedTasks: [],
+            startTime: Date.now()
         };
 
         // Загрузка сохраненных данных
@@ -331,42 +332,132 @@
         document.getElementById('referral-btn').addEventListener('click', function() {
             tg.sendData(JSON.stringify({
                 action: 'referral',
-                userId: tg.initDataUnsafe?.user?.id
+                userId: tg.initDataUnsafe?.user?.id,
+                data: {
+                    referrals: player.referrals,
+                    coins: player.coins,
+                    totalReferralEarnings: player.referrals.length * 100
+                }
             }));
         });
 
         document.getElementById('tasks-btn').addEventListener('click', function() {
+            // Проверяем выполнение заданий
+            const tasks = [
+                {
+                    id: 1,
+                    name: "Набрать 1000 кликов",
+                    completed: player.totalClicks >= 1000,
+                    reward: 500
+                },
+                {
+                    id: 2,
+                    name: "Накопить 10000 монет",
+                    completed: player.coins >= 10000,
+                    reward: 1000
+                },
+                {
+                    id: 3,
+                    name: "Пригласить 3 друзей",
+                    completed: player.referrals.length >= 3,
+                    reward: 2000
+                },
+                {
+                    id: 4,
+                    name: "Улучшить силу клика до 10",
+                    completed: player.clickPower >= 10,
+                    reward: 1500
+                },
+                {
+                    id: 5,
+                    name: "Получить пассивный доход 5/сек",
+                    completed: player.passiveIncome >= 5,
+                    reward: 3000
+                }
+            ];
+
+            // Проверяем новые выполненные задания
+            tasks.forEach(task => {
+                if (task.completed && !player.completedTasks.includes(task.id)) {
+                    player.completedTasks.push(task.id);
+                    player.coins += task.reward;
+                    updateUI();
+                    saveData();
+                }
+            });
+
             tg.sendData(JSON.stringify({
                 action: 'tasks',
                 userId: tg.initDataUnsafe?.user?.id,
                 data: {
-                    totalClicks: player.totalClicks,
-                    coins: player.coins,
-                    clickPower: player.clickPower,
-                    passiveIncome: player.passiveIncome,
-                    completedTasks: player.completedTasks
+                    tasks: tasks,
+                    completedTasks: player.completedTasks,
+                    totalTasks: tasks.length
                 }
             }));
         });
 
         document.getElementById('shop-btn').addEventListener('click', function() {
+            const shopItems = [
+                {
+                    id: 1,
+                    name: "100 алмазов",
+                    price: "50 рублей",
+                    coins: 10000
+                },
+                {
+                    id: 2,
+                    name: "500 алмазов",
+                    price: "200 рублей",
+                    coins: 60000
+                },
+                {
+                    id: 3,
+                    name: "1200 алмазов",
+                    price: "400 рублей",
+                    coins: 150000
+                },
+                {
+                    id: 4,
+                    name: "VIP статус",
+                    price: "1000 рублей",
+                    perks: ["x2 монет", "x2 пассивный доход", "Уникальный значок"]
+                }
+            ];
+
             tg.sendData(JSON.stringify({
                 action: 'shop',
-                userId: tg.initDataUnsafe?.user?.id
+                userId: tg.initDataUnsafe?.user?.id,
+                data: {
+                    items: shopItems,
+                    userCoins: player.coins
+                }
             }));
         });
 
         document.getElementById('stats-btn').addEventListener('click', function() {
+            const stats = {
+                totalClicks: player.totalClicks,
+                coins: player.coins,
+                clickPower: player.clickPower,
+                passiveIncome: player.passiveIncome,
+                clicksToday: player.clicksToday,
+                maxClicks: player.maxClicks,
+                referrals: player.referrals.length,
+                completedTasks: player.completedTasks.length,
+                totalUpgrades: player.upgrades.click_power + player.upgrades.passive_income - 2,
+                playTime: Math.floor((Date.now() - player.startTime || Date.now()) / 1000 / 60), // в минутах
+                achievements: {
+                    clicks: getClickAchievementLevel(player.totalClicks),
+                    coins: getCoinAchievementLevel(player.coins),
+                    referrals: getReferralAchievementLevel(player.referrals.length)
+                }
+            };
+
             tg.sendData(JSON.stringify({
                 action: 'stats',
                 userId: tg.initDataUnsafe?.user?.id,
-                data: {
-                    coins: player.coins,
-                    clickPower: player.clickPower,
-                    passiveIncome: player.passiveIncome,
-                    totalClicks: player.totalClicks,
-                    clicksToday: player.clicksToday
-                }
+                data: stats
             }));
         });
 
@@ -509,6 +600,31 @@
         // Проверяем сброс кликов каждую минуту
         setInterval(resetDailyClicks, 60000);
         resetDailyClicks(); // Проверяем при загрузке
+
+        // Вспомогательные функции для достижений
+        function getClickAchievementLevel(clicks) {
+            if (clicks >= 10000) return "Легенда";
+            if (clicks >= 5000) return "Мастер";
+            if (clicks >= 1000) return "Профи";
+            if (clicks >= 100) return "Новичок";
+            return "Начинающий";
+        }
+
+        function getCoinAchievementLevel(coins) {
+            if (coins >= 1000000) return "Миллионер";
+            if (coins >= 100000) return "Богач";
+            if (coins >= 10000) return "Состоятельный";
+            if (coins >= 1000) return "Обеспеченный";
+            return "Бедняк";
+        }
+
+        function getReferralAchievementLevel(referrals) {
+            if (referrals >= 20) return "Лидер";
+            if (referrals >= 10) return "Популярный";
+            if (referrals >= 5) return "Общительный";
+            if (referrals >= 1) return "Дружелюбный";
+            return "Одиночка";
+        }
 
         // Инициализация
         tg.ready();
