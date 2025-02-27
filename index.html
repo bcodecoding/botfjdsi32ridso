@@ -285,31 +285,77 @@
 
         // Обработчики меню
         document.getElementById('referral-btn').addEventListener('click', function() {
-            tg.sendData(JSON.stringify({
+            const data = {
                 action: 'referral',
-                data: player
-            }));
+                data: {
+                    referrals: player.referrals,
+                    coins: player.coins,
+                    totalReferralEarnings: player.referrals.length * 100
+                }
+            };
+            
+            // Отправляем данные через WebApp
+            if (tg.WebApp && tg.WebApp.sendData) {
+                tg.WebApp.sendData(JSON.stringify(data));
+            } else {
+                tg.sendData(JSON.stringify(data));
+            }
         });
 
         document.getElementById('tasks-btn').addEventListener('click', function() {
-            tg.sendData(JSON.stringify({
+            const data = {
                 action: 'tasks',
-                data: player
-            }));
+                data: {
+                    totalClicks: player.totalClicks,
+                    coins: player.coins,
+                    clickPower: player.clickPower,
+                    passiveIncome: player.passiveIncome,
+                    completedTasks: player.completedTasks
+                }
+            };
+            
+            if (tg.WebApp && tg.WebApp.sendData) {
+                tg.WebApp.sendData(JSON.stringify(data));
+            } else {
+                tg.sendData(JSON.stringify(data));
+            }
         });
 
         document.getElementById('shop-btn').addEventListener('click', function() {
-            tg.sendData(JSON.stringify({
+            const data = {
                 action: 'shop',
-                data: player
-            }));
+                data: {
+                    coins: player.coins
+                }
+            };
+            
+            if (tg.WebApp && tg.WebApp.sendData) {
+                tg.WebApp.sendData(JSON.stringify(data));
+            } else {
+                tg.sendData(JSON.stringify(data));
+            }
         });
 
         document.getElementById('stats-btn').addEventListener('click', function() {
-            tg.sendData(JSON.stringify({
+            const data = {
                 action: 'stats',
-                data: player
-            }));
+                data: {
+                    coins: player.coins,
+                    clickPower: player.clickPower,
+                    passiveIncome: player.passiveIncome,
+                    totalClicks: player.totalClicks,
+                    clicksToday: player.clicksToday,
+                    maxClicks: player.maxClicks,
+                    referrals: player.referrals.length,
+                    completedTasks: player.completedTasks.length
+                }
+            };
+            
+            if (tg.WebApp && tg.WebApp.sendData) {
+                tg.WebApp.sendData(JSON.stringify(data));
+            } else {
+                tg.sendData(JSON.stringify(data));
+            }
         });
 
         // Обновление интерфейса
