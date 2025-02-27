@@ -16,10 +16,6 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-            -webkit-touch-callout: none;
-            -webkit-user-select: none;
-            user-select: none;
         }
 
         body {
@@ -176,31 +172,6 @@
                 opacity: 0;
             }
         }
-
-        .menu-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-top: 30px;
-        }
-
-        .menu-button {
-            background: var(--card-bg);
-            border: none;
-            border-radius: 20px;
-            padding: 20px;
-            color: var(--tg-theme-text-color);
-            font-size: 16px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .menu-button:hover {
-            transform: translateY(-2px);
-            background: #3a3a3a;
-        }
     </style>
 </head>
 <body>
@@ -242,21 +213,6 @@
             <button class="upgrade-button" id="upgrade-passive">
                 <span>📈 Улучшить пассивный доход</span>
                 <span class="cost">25 💰</span>
-            </button>
-        </div>
-
-        <div class="menu-grid">
-            <button class="menu-button" id="referral-btn">
-                👥 Рефералы
-            </button>
-            <button class="menu-button" id="tasks-btn">
-                📋 Задания
-            </button>
-            <button class="menu-button" id="shop-btn">
-                🛍 Магазин
-            </button>
-            <button class="menu-button" id="stats-btn">
-                📊 Статистика
             </button>
         </div>
     </div>
