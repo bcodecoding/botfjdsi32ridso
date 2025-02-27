@@ -16,6 +16,11 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent !important;
+            -webkit-touch-callout: none !important;
+            -webkit-user-select: none !important;
+            user-select: none !important;
+            outline: none !important;
         }
 
         body {
@@ -30,6 +35,7 @@
             max-width: 500px;
             margin: 0 auto;
             padding: 20px;
+            padding-bottom: 100px;
         }
 
         .header {
@@ -197,6 +203,40 @@
             transform: translateY(-2px);
             background: #3a3a3a;
         }
+
+        /* Стили для кнопок меню */
+        .bottom-menu {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            padding: 15px;
+            background: var(--tg-theme-bg-color);
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .menu-button {
+            background: var(--card-bg);
+            border: none;
+            border-radius: 15px;
+            padding: 15px;
+            color: var(--tg-theme-text-color);
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .menu-button:active {
+            transform: scale(0.95);
+            background: #3a3a3a;
+        }
     </style>
 </head>
 <body>
@@ -241,8 +281,8 @@
             </button>
         </div>
 
-        <!-- Добавляем меню после upgrades-container -->
-        <div class="menu-grid">
+        <!-- Обновленное меню -->
+        <div class="bottom-menu">
             <button class="menu-button" id="referral-btn">
                 👥 Рефералы
             </button>
@@ -287,41 +327,65 @@
             console.error('Ошибка загрузки данных:', e);
         }
 
-        // Обработчики меню
-        document.getElementById('referral-btn').onclick = function() {
-            tg.sendData(JSON.stringify({
-                action: 'referral',
-                userId: tg.initDataUnsafe?.user?.id
-            }));
+        // Обработчики меню с подтверждением отправки данных
+        document.getElementById('referral-btn').onclick = async function() {
+            try {
+                await tg.sendData(JSON.stringify({
+                    action: 'referral',
+                    userId: tg.initDataUnsafe?.user?.id
+                }));
+            } catch (e) {
+                console.error('Ошибка отправки данных:', e);
+            }
         };
 
-        document.getElementById('tasks-btn').onclick = function() {
-            tg.sendData(JSON.stringify({
-                action: 'tasks',
-                userId: tg.initDataUnsafe?.user?.id
-            }));
+        document.getElementById('tasks-btn').onclick = async function() {
+            try {
+                await tg.sendData(JSON.stringify({
+                    action: 'tasks',
+                    userId: tg.initDataUnsafe?.user?.id,
+                    data: {
+                        totalClicks: player.totalClicks,
+                        coins: player.coins,
+                        clickPower: player.clickPower,
+                        passiveIncome: player.passiveIncome,
+                        referrals: player.referrals.length,
+                        completedTasks: player.completedTasks
+                    }
+                }));
+            } catch (e) {
+                console.error('Ошибка отправки данных:', e);
+            }
         };
 
-        document.getElementById('shop-btn').onclick = function() {
-            tg.sendData(JSON.stringify({
-                action: 'shop',
-                userId: tg.initDataUnsafe?.user?.id
-            }));
+        document.getElementById('shop-btn').onclick = async function() {
+            try {
+                await tg.sendData(JSON.stringify({
+                    action: 'shop',
+                    userId: tg.initDataUnsafe?.user?.id
+                }));
+            } catch (e) {
+                console.error('Ошибка отправки данных:', e);
+            }
         };
 
-        document.getElementById('stats-btn').onclick = function() {
-            tg.sendData(JSON.stringify({
-                action: 'stats',
-                userId: tg.initDataUnsafe?.user?.id,
-                data: {
-                    coins: player.coins,
-                    clickPower: player.clickPower,
-                    passiveIncome: player.passiveIncome,
-                    totalClicks: player.totalClicks,
-                    clicksToday: player.clicksToday,
-                    referrals: player.referrals.length
-                }
-            }));
+        document.getElementById('stats-btn').onclick = async function() {
+            try {
+                await tg.sendData(JSON.stringify({
+                    action: 'stats',
+                    userId: tg.initDataUnsafe?.user?.id,
+                    data: {
+                        coins: player.coins,
+                        clickPower: player.clickPower,
+                        passiveIncome: player.passiveIncome,
+                        totalClicks: player.totalClicks,
+                        clicksToday: player.clicksToday,
+                        referrals: player.referrals.length
+                    }
+                }));
+            } catch (e) {
+                console.error('Ошибка отправки данных:', e);
+            }
         };
 
         // Обработчик клика
@@ -422,7 +486,7 @@
             document.querySelector('#upgrade-passive .cost').textContent = `${passiveCost} 💰`;
         }
 
-        // Сохранение данных
+        // Улучшенное сохранение данных
         function saveData() {
             try {
                 localStorage.setItem('playerData', JSON.stringify(player));
@@ -430,13 +494,14 @@
                     action: 'save',
                     data: player
                 }));
+                console.log('Данные сохранены:', player);
             } catch (e) {
                 console.error('Ошибка сохранения:', e);
             }
         }
 
-        // Автосохранение каждые 30 секунд
-        setInterval(saveData, 30000);
+        // Более частое автосохранение
+        setInterval(saveData, 10000);
 
         // Пассивный доход
         setInterval(() => {
