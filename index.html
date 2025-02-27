@@ -261,11 +261,11 @@
 
         // Улучшение силы клика
         document.getElementById('upgrade-click').addEventListener('click', function() {
-            const cost = Math.floor(15 * Math.pow(1.5, player.upgrades.click_power - 1));
+            const cost = 15 + (player.upgrades.click_power * 10);
             if (player.coins >= cost) {
                 player.coins -= cost;
                 player.upgrades.click_power++;
-                player.clickPower = player.upgrades.click_power;
+                player.clickPower++;
                 updateUI();
                 saveData();
             }
@@ -273,11 +273,11 @@
 
         // Улучшение пассивного дохода
         document.getElementById('upgrade-passive').addEventListener('click', function() {
-            const cost = Math.floor(25 * Math.pow(1.5, player.upgrades.passive_income));
+            const cost = 25 + (player.upgrades.passive_income * 15);
             if (player.coins >= cost) {
                 player.coins -= cost;
                 player.upgrades.passive_income++;
-                player.passiveIncome = player.upgrades.passive_income;
+                player.passiveIncome++;
                 updateUI();
                 saveData();
             }
@@ -285,50 +285,49 @@
 
         // Обработчики меню
         document.getElementById('referral-btn').addEventListener('click', function() {
-            const message = {
-                action: 'referral',
-                data: {
-                    referrals: player.referrals,
-                    coins: player.coins
-                }
-            };
-            window.Telegram.WebApp.sendData(JSON.stringify(message));
+            window.location.href = `https://t.me/${tg.initDataUnsafe.user.username}?start=ref`;
         });
 
         document.getElementById('tasks-btn').addEventListener('click', function() {
-            const message = {
-                action: 'tasks',
-                data: {
-                    totalClicks: player.totalClicks,
-                    coins: player.coins,
-                    clickPower: player.clickPower
-                }
-            };
-            window.Telegram.WebApp.sendData(JSON.stringify(message));
+            const command = '/tasks';
+            fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    chat_id: tg.initDataUnsafe.user.id,
+                    text: command
+                })
+            });
         });
 
         document.getElementById('shop-btn').addEventListener('click', function() {
-            const message = {
-                action: 'shop',
-                data: {
-                    coins: player.coins
-                }
-            };
-            window.Telegram.WebApp.sendData(JSON.stringify(message));
+            const command = '/shop';
+            fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    chat_id: tg.initDataUnsafe.user.id,
+                    text: command
+                })
+            });
         });
 
         document.getElementById('stats-btn').addEventListener('click', function() {
-            const message = {
-                action: 'stats',
-                data: {
-                    coins: player.coins,
-                    clickPower: player.clickPower,
-                    passiveIncome: player.passiveIncome,
-                    totalClicks: player.totalClicks,
-                    clicksToday: player.clicksToday
-                }
-            };
-            window.Telegram.WebApp.sendData(JSON.stringify(message));
+            const command = '/stats';
+            fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    chat_id: tg.initDataUnsafe.user.id,
+                    text: command
+                })
+            });
         });
 
         // Обновление интерфейса
@@ -338,8 +337,8 @@
             document.getElementById('passive-income').textContent = player.passiveIncome;
             document.getElementById('clicks-today').textContent = `${player.clicksToday}/${player.maxClicks}`;
 
-            const clickCost = Math.floor(15 * Math.pow(1.5, player.upgrades.click_power - 1));
-            const passiveCost = Math.floor(25 * Math.pow(1.5, player.upgrades.passive_income));
+            const clickCost = 15 + (player.upgrades.click_power * 10);
+            const passiveCost = 25 + (player.upgrades.passive_income * 15);
             
             document.getElementById('click-cost').textContent = clickCost;
             document.getElementById('passive-cost').textContent = passiveCost;
