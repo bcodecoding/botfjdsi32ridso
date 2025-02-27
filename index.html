@@ -172,6 +172,31 @@
                 opacity: 0;
             }
         }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .menu-button {
+            background: var(--card-bg);
+            border: none;
+            border-radius: 20px;
+            padding: 20px;
+            color: var(--tg-theme-text-color);
+            font-size: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .menu-button:hover {
+            transform: translateY(-2px);
+            background: #3a3a3a;
+        }
     </style>
 </head>
 <body>
@@ -215,6 +240,22 @@
                 <span class="cost">25 💰</span>
             </button>
         </div>
+
+        <!-- Добавляем меню после upgrades-container -->
+        <div class="menu-grid">
+            <button class="menu-button" id="referral-btn">
+                👥 Рефералы
+            </button>
+            <button class="menu-button" id="tasks-btn">
+                📋 Задания
+            </button>
+            <button class="menu-button" id="shop-btn">
+                🛍 Магазин
+            </button>
+            <button class="menu-button" id="stats-btn">
+                📊 Статистика
+            </button>
+        </div>
     </div>
 
     <script>
@@ -227,12 +268,107 @@
             passiveIncome: 0,
             clicksToday: 0,
             maxClicks: 700,
+            totalClicks: 0,
             upgrades: {
                 click_power: 1,
                 passive_income: 0
+            },
+            referrals: [],
+            completedTasks: []
+        };
+
+        // Загрузка сохраненных данных
+        try {
+            const savedData = localStorage.getItem('playerData');
+            if (savedData) {
+                player = JSON.parse(savedData);
+            }
+        } catch (e) {
+            console.error('Ошибка загрузки данных:', e);
+        }
+
+        // Обработчики меню
+        document.getElementById('referral-btn').onclick = function() {
+            tg.sendData(JSON.stringify({
+                action: 'referral',
+                userId: tg.initDataUnsafe?.user?.id
+            }));
+        };
+
+        document.getElementById('tasks-btn').onclick = function() {
+            tg.sendData(JSON.stringify({
+                action: 'tasks',
+                userId: tg.initDataUnsafe?.user?.id
+            }));
+        };
+
+        document.getElementById('shop-btn').onclick = function() {
+            tg.sendData(JSON.stringify({
+                action: 'shop',
+                userId: tg.initDataUnsafe?.user?.id
+            }));
+        };
+
+        document.getElementById('stats-btn').onclick = function() {
+            tg.sendData(JSON.stringify({
+                action: 'stats',
+                userId: tg.initDataUnsafe?.user?.id,
+                data: {
+                    coins: player.coins,
+                    clickPower: player.clickPower,
+                    passiveIncome: player.passiveIncome,
+                    totalClicks: player.totalClicks,
+                    clicksToday: player.clicksToday,
+                    referrals: player.referrals.length
+                }
+            }));
+        };
+
+        // Обработчик клика
+        document.getElementById('click-btn').onclick = function(e) {
+            if (player.clicksToday < player.maxClicks) {
+                createRipple(e);
+                player.coins += player.clickPower;
+                player.clicksToday++;
+                player.totalClicks++;
+                createFloatingCoins(player.clickPower);
+                updateUI();
+                saveData();
+            } else {
+                tg.showAlert('Достигнут лимит кликов! Подождите 8 часов.');
             }
         };
 
+        // Обработчики улучшений
+        document.getElementById('upgrade-click').onclick = function() {
+            const cost = getUpgradeCost('click_power');
+            if (player.coins >= cost) {
+                player.coins -= cost;
+                player.upgrades.click_power++;
+                player.clickPower = player.upgrades.click_power;
+                updateUI();
+                saveData();
+                tg.showAlert(`Сила клика улучшена до ${player.clickPower}!`);
+            } else {
+                tg.showAlert('Недостаточно монет!');
+            }
+        };
+
+        document.getElementById('upgrade-passive').onclick = function() {
+            const cost = getUpgradeCost('passive_income');
+            if (player.coins >= cost) {
+                player.coins -= cost;
+                player.upgrades.passive_income++;
+                player.passiveIncome = player.upgrades.passive_income;
+                updateUI();
+                saveData();
+                tg.showAlert(`Пассивный доход улучшен до ${player.passiveIncome}/сек!`);
+            } else {
+                tg.showAlert('Недостаточно монет!');
+            }
+        };
+
+        // Вспомогательные функции
         function createRipple(event) {
             const button = event.currentTarget;
             const circle = document.createElement("span");
@@ -272,44 +408,6 @@
             return Math.floor(baseCosts[type] * Math.pow(1.5, level));
         }
 
-        document.getElementById('click-btn').onclick = function(e) {
-            if (player.clicksToday < player.maxClicks) {
-                createRipple(e);
-                player.coins += player.clickPower;
-                player.clicksToday++;
-                createFloatingCoins(player.clickPower);
-                updateUI();
-            } else {
-                tg.showAlert('Достигнут лимит кликов! Подождите 8 часов.');
-            }
-        };
-
-        document.getElementById('upgrade-click').onclick = function() {
-            const cost = getUpgradeCost('click_power');
-            if (player.coins >= cost) {
-                player.coins -= cost;
-                player.upgrades.click_power++;
-                player.clickPower = player.upgrades.click_power;
-                updateUI();
-                tg.showAlert(`Сила клика улучшена до ${player.clickPower}!`);
-            } else {
-                tg.showAlert('Недостаточно монет!');
-            }
-        };
-
-        document.getElementById('upgrade-passive').onclick = function() {
-            const cost = getUpgradeCost('passive_income');
-            if (player.coins >= cost) {
-                player.coins -= cost;
-                player.upgrades.passive_income++;
-                player.passiveIncome = player.upgrades.passive_income;
-                updateUI();
-                tg.showAlert(`Пассивный доход улучшен до ${player.passiveIncome}/сек!`);
-            } else {
-                tg.showAlert('Недостаточно монет!');
-            }
-        };
-
         function updateUI() {
             document.getElementById('coins').textContent = `${player.coins} 💰`;
             document.getElementById('click-power').textContent = `${player.clickPower} ⚔️`;
@@ -324,20 +422,48 @@
             document.querySelector('#upgrade-passive .cost').textContent = `${passiveCost} 💰`;
         }
 
+        // Сохранение данных
+        function saveData() {
+            try {
+                localStorage.setItem('playerData', JSON.stringify(player));
+                tg.sendData(JSON.stringify({
+                    action: 'save',
+                    data: player
+                }));
+            } catch (e) {
+                console.error('Ошибка сохранения:', e);
+            }
+        }
+
+        // Автосохранение каждые 30 секунд
+        setInterval(saveData, 30000);
+
+        // Пассивный доход
         setInterval(() => {
             if (player.passiveIncome > 0) {
                 player.coins += player.passiveIncome;
                 updateUI();
+                saveData();
             }
         }, 1000);
 
-        setInterval(() => {
-            tg.sendData(JSON.stringify({
-                action: 'save',
-                data: player
-            }));
-        }, 5000);
+        // Сброс дневного лимита кликов
+        function resetDailyClicks() {
+            const now = new Date();
+            const lastReset = localStorage.getItem('lastClickReset');
+            if (!lastReset || (now - new Date(lastReset)) >= 8 * 60 * 60 * 1000) {
+                player.clicksToday = 0;
+                localStorage.setItem('lastClickReset', now.toISOString());
+                updateUI();
+                saveData();
+            }
+        }
 
+        // Проверяем сброс кликов каждую минуту
+        setInterval(resetDailyClicks, 60000);
+        resetDailyClicks(); // Проверяем при загрузке
+
+        // Инициализация
         tg.ready();
         updateUI();
     </script>
