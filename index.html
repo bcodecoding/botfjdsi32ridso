@@ -330,7 +330,13 @@
 
         // Обновляем обработчики меню
         document.getElementById('referral-btn').addEventListener('click', function() {
-            tg.sendData(JSON.stringify({
+            tg.MainButton.text = "Закрыть рефералы";
+            tg.MainButton.show();
+            tg.MainButton.onClick(function(){
+                tg.MainButton.hide();
+            });
+            
+            tg.WebApp.sendData(JSON.stringify({
                 action: 'referral',
                 userId: tg.initDataUnsafe?.user?.id,
                 data: {
@@ -342,7 +348,12 @@
         });
 
         document.getElementById('tasks-btn').addEventListener('click', function() {
-            // Проверяем выполнение заданий
+            tg.MainButton.text = "Закрыть задания";
+            tg.MainButton.show();
+            tg.MainButton.onClick(function(){
+                tg.MainButton.hide();
+            });
+            
             const tasks = [
                 {
                     id: 1,
@@ -376,17 +387,7 @@
                 }
             ];
 
-            // Проверяем новые выполненные задания
-            tasks.forEach(task => {
-                if (task.completed && !player.completedTasks.includes(task.id)) {
-                    player.completedTasks.push(task.id);
-                    player.coins += task.reward;
-                    updateUI();
-                    saveData();
-                }
-            });
-
-            tg.sendData(JSON.stringify({
+            tg.WebApp.sendData(JSON.stringify({
                 action: 'tasks',
                 userId: tg.initDataUnsafe?.user?.id,
                 data: {
@@ -398,6 +399,12 @@
         });
 
         document.getElementById('shop-btn').addEventListener('click', function() {
+            tg.MainButton.text = "Закрыть магазин";
+            tg.MainButton.show();
+            tg.MainButton.onClick(function(){
+                tg.MainButton.hide();
+            });
+            
             const shopItems = [
                 {
                     id: 1,
@@ -425,7 +432,7 @@
                 }
             ];
 
-            tg.sendData(JSON.stringify({
+            tg.WebApp.sendData(JSON.stringify({
                 action: 'shop',
                 userId: tg.initDataUnsafe?.user?.id,
                 data: {
@@ -436,6 +443,12 @@
         });
 
         document.getElementById('stats-btn').addEventListener('click', function() {
+            tg.MainButton.text = "Закрыть статистику";
+            tg.MainButton.show();
+            tg.MainButton.onClick(function(){
+                tg.MainButton.hide();
+            });
+            
             const stats = {
                 totalClicks: player.totalClicks,
                 coins: player.coins,
@@ -446,7 +459,7 @@
                 referrals: player.referrals.length,
                 completedTasks: player.completedTasks.length,
                 totalUpgrades: player.upgrades.click_power + player.upgrades.passive_income - 2,
-                playTime: Math.floor((Date.now() - player.startTime || Date.now()) / 1000 / 60), // в минутах
+                playTime: Math.floor((Date.now() - player.startTime || Date.now()) / 1000 / 60),
                 achievements: {
                     clicks: getClickAchievementLevel(player.totalClicks),
                     coins: getCoinAchievementLevel(player.coins),
@@ -454,7 +467,7 @@
                 }
             };
 
-            tg.sendData(JSON.stringify({
+            tg.WebApp.sendData(JSON.stringify({
                 action: 'stats',
                 userId: tg.initDataUnsafe?.user?.id,
                 data: stats
@@ -563,10 +576,6 @@
         function saveData() {
             try {
                 localStorage.setItem('playerData', JSON.stringify(player));
-                tg.sendData(JSON.stringify({
-                    action: 'save',
-                    data: player
-                }));
                 console.log('Данные сохранены:', player);
             } catch (e) {
                 console.error('Ошибка сохранения:', e);
