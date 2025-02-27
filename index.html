@@ -8,8 +8,6 @@
         :root {
             --tg-theme-bg-color: #1a1a1a;
             --tg-theme-text-color: #ffffff;
-            --tg-theme-button-color: #8c52ff;
-            --tg-theme-button-text-color: #ffffff;
             --accent-color: #8c52ff;
             --card-bg: #2a2a2a;
         }
@@ -25,6 +23,7 @@
             background: var(--tg-theme-bg-color);
             color: var(--tg-theme-text-color);
             line-height: 1.6;
+            min-height: 100vh;
         }
 
         .container {
@@ -36,27 +35,71 @@
         .header {
             text-align: center;
             padding: 20px 0;
-            margin-bottom: 30px;
-            border-bottom: 2px solid var(--accent-color);
+            margin-bottom: 20px;
         }
 
         .header h1 {
-            font-size: 28px;
+            font-size: 32px;
             font-weight: 700;
             color: var(--accent-color);
+            text-shadow: 0 0 10px rgba(140, 82, 255, 0.3);
         }
 
-        .stats-grid {
+        .clicker-container {
+            position: relative;
+            width: 240px;
+            height: 240px;
+            margin: 30px auto;
+        }
+
+        .click-button {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: none;
+            background: radial-gradient(circle at 30% 30%, #a875ff, #8c52ff);
+            color: #ffffff;
+            font-size: 24px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 0 30px rgba(140, 82, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .click-button:active {
+            transform: scale(0.95);
+            box-shadow: 0 0 20px rgba(140, 82, 255, 0.2);
+        }
+
+        .click-ripple {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            pointer-events: none;
+            transform: scale(0);
+            animation: ripple 0.6s linear;
+        }
+
+        @keyframes ripple {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        .stats-container {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 15px;
-            margin-bottom: 30px;
+            margin: 30px 0;
         }
 
         .stat-card {
             background: var(--card-bg);
             padding: 20px;
-            border-radius: 15px;
+            border-radius: 20px;
             text-align: center;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             transition: transform 0.2s;
@@ -78,38 +121,18 @@
             color: var(--accent-color);
         }
 
-        .click-button {
-            width: 100%;
-            height: 120px;
-            border: none;
-            border-radius: 20px;
-            background: var(--accent-color);
-            color: #ffffff;
-            font-size: 24px;
-            font-weight: 700;
-            margin: 20px 0;
-            cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 4px 15px rgba(140, 82, 255, 0.3);
-        }
-
-        .click-button:active {
-            transform: scale(0.95);
-            box-shadow: 0 2px 8px rgba(140, 82, 255, 0.2);
-        }
-
-        .upgrade-grid {
+        .upgrades-container {
             display: grid;
             grid-template-columns: 1fr;
             gap: 15px;
-            margin-top: 20px;
+            margin-top: 30px;
         }
 
         .upgrade-button {
             background: var(--card-bg);
             border: none;
-            border-radius: 15px;
-            padding: 15px;
+            border-radius: 20px;
+            padding: 20px;
             color: var(--tg-theme-text-color);
             font-size: 16px;
             display: flex;
@@ -117,9 +140,11 @@
             align-items: center;
             cursor: pointer;
             transition: all 0.2s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
         .upgrade-button:hover {
+            transform: translateY(-2px);
             background: #3a3a3a;
         }
 
@@ -128,43 +153,24 @@
             font-weight: 700;
         }
 
-        .menu-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-top: 30px;
-        }
-
-        .menu-button {
-            background: var(--card-bg);
-            border: none;
-            border-radius: 15px;
-            padding: 20px;
-            color: var(--tg-theme-text-color);
-            font-size: 16px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .menu-button:hover {
-            background: #3a3a3a;
-        }
-
-        .menu-button i {
-            font-size: 24px;
-            margin-bottom: 8px;
+        .floating-coins {
+            position: absolute;
+            pointer-events: none;
+            font-size: 20px;
+            font-weight: bold;
             color: var(--accent-color);
+            animation: float-up 1s ease-out forwards;
         }
 
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-
-        .pulse {
-            animation: pulse 0.5s ease-in-out;
+        @keyframes float-up {
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) scale(1.5);
+                opacity: 0;
+            }
         }
     </style>
 </head>
@@ -174,7 +180,13 @@
             <h1>🐹 Hampire</h1>
         </div>
 
-        <div class="stats-grid">
+        <div class="clicker-container">
+            <button class="click-button" id="click-btn">
+                🐹 КЛИК!
+            </button>
+        </div>
+
+        <div class="stats-container">
             <div class="stat-card">
                 <h3>Монеты</h3>
                 <div class="value" id="coins">0 💰</div>
@@ -193,11 +205,7 @@
             </div>
         </div>
 
-        <button class="click-button" id="click-btn">
-            🐹 КЛИК! 🐹
-        </button>
-
-        <div class="upgrade-grid">
+        <div class="upgrades-container">
             <button class="upgrade-button" id="upgrade-click">
                 <span>⚔️ Улучшить силу клика</span>
                 <span class="cost">10 💰</span>
@@ -207,28 +215,12 @@
                 <span class="cost">25 💰</span>
             </button>
         </div>
-
-        <div class="menu-grid">
-            <button class="menu-button" id="tasks-btn">
-                📋 Задания
-            </button>
-            <button class="menu-button" id="shop-btn">
-                🛍 Магазин
-            </button>
-            <button class="menu-button" id="referral-btn">
-                👥 Рефералы
-            </button>
-            <button class="menu-button" id="stats-btn">
-                📊 Статистика
-            </button>
-        </div>
     </div>
 
     <script>
         let tg = window.Telegram.WebApp;
         tg.expand();
 
-        // Инициализация игрока
         let player = {
             coins: 0,
             clickPower: 1,
@@ -241,17 +233,36 @@
             }
         };
 
-        // Загрузка данных игрока
-        try {
-            const initData = tg.initDataUnsafe.user;
-            if (initData) {
-                player = { ...player, ...initData };
-            }
-        } catch (e) {
-            console.error('Ошибка загрузки данных:', e);
+        function createRipple(event) {
+            const button = event.currentTarget;
+            const circle = document.createElement("span");
+            const diameter = Math.max(button.clientWidth, button.clientHeight);
+            const radius = diameter / 2;
+
+            circle.style.width = circle.style.height = `${diameter}px`;
+            circle.style.left = `${event.clientX - button.offsetLeft - radius}px`;
+            circle.style.top = `${event.clientY - button.offsetTop - radius}px`;
+            circle.classList.add("click-ripple");
+
+            button.appendChild(circle);
+            setTimeout(() => circle.remove(), 600);
         }
 
-        // Функция подсчета стоимости улучшения
+        function createFloatingCoins(amount) {
+            const coin = document.createElement("div");
+            coin.classList.add("floating-coins");
+            coin.textContent = `+${amount} 💰`;
+            
+            const button = document.getElementById('click-btn');
+            const rect = button.getBoundingClientRect();
+            
+            coin.style.left = `${rect.left + rect.width/2}px`;
+            coin.style.top = `${rect.top + rect.height/2}px`;
+            
+            document.body.appendChild(coin);
+            setTimeout(() => coin.remove(), 1000);
+        }
+
         function getUpgradeCost(type) {
             const baseCosts = {
                 click_power: 10,
@@ -261,20 +272,18 @@
             return Math.floor(baseCosts[type] * Math.pow(1.5, level));
         }
 
-        // Обработчик клика
-        document.getElementById('click-btn').onclick = function() {
+        document.getElementById('click-btn').onclick = function(e) {
             if (player.clicksToday < player.maxClicks) {
+                createRipple(e);
                 player.coins += player.clickPower;
                 player.clicksToday++;
-                this.classList.add('pulse');
-                setTimeout(() => this.classList.remove('pulse'), 500);
+                createFloatingCoins(player.clickPower);
                 updateUI();
             } else {
                 tg.showAlert('Достигнут лимит кликов! Подождите 8 часов.');
             }
         };
 
-        // Обработчик улучшения силы клика
         document.getElementById('upgrade-click').onclick = function() {
             const cost = getUpgradeCost('click_power');
             if (player.coins >= cost) {
@@ -288,7 +297,6 @@
             }
         };
 
-        // Обработчик улучшения пассивного дохода
         document.getElementById('upgrade-passive').onclick = function() {
             const cost = getUpgradeCost('passive_income');
             if (player.coins >= cost) {
@@ -302,24 +310,6 @@
             }
         };
 
-        // Обработчики кнопок меню
-        document.getElementById('tasks-btn').onclick = function() {
-            tg.sendData(JSON.stringify({ action: 'tasks' }));
-        };
-
-        document.getElementById('shop-btn').onclick = function() {
-            tg.sendData(JSON.stringify({ action: 'shop' }));
-        };
-
-        document.getElementById('referral-btn').onclick = function() {
-            tg.sendData(JSON.stringify({ action: 'referral' }));
-        };
-
-        document.getElementById('stats-btn').onclick = function() {
-            tg.sendData(JSON.stringify({ action: 'stats' }));
-        };
-
-        // Обновление интерфейса
         function updateUI() {
             document.getElementById('coins').textContent = `${player.coins} 💰`;
             document.getElementById('click-power').textContent = `${player.clickPower} ⚔️`;
@@ -327,7 +317,6 @@
             document.getElementById('clicks-today').textContent = 
                 `${player.clicksToday}/${player.maxClicks} 🖱`;
 
-            // Обновляем стоимость улучшений
             const clickCost = getUpgradeCost('click_power');
             const passiveCost = getUpgradeCost('passive_income');
             
@@ -335,7 +324,6 @@
             document.querySelector('#upgrade-passive .cost').textContent = `${passiveCost} 💰`;
         }
 
-        // Пассивный доход
         setInterval(() => {
             if (player.passiveIncome > 0) {
                 player.coins += player.passiveIncome;
@@ -343,7 +331,6 @@
             }
         }, 1000);
 
-        // Автосохранение
         setInterval(() => {
             tg.sendData(JSON.stringify({
                 action: 'save',
@@ -351,7 +338,6 @@
             }));
         }, 5000);
 
-        // Инициализация
         tg.ready();
         updateUI();
     </script>
