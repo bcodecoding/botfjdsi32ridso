@@ -319,15 +319,26 @@
     }
 
     /* Code blocks */
-    .message-content pre {
-        background-color: #1E1E1E;
-        padding: 16px;
-        border-radius: 6px;
-        overflow-x: auto;
+    .code-block {
         position: relative;
-        margin: 16px 0;
+        margin: 1rem 0;
+        background: #1E1E1E;
+        border-radius: 6px;
+        overflow: hidden;
+    }
+
+    .code-block pre {
+        margin: 0;
+        padding: 16px;
+        overflow-x: auto;
         font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
         font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .code-block code {
+        display: block;
+        white-space: pre-wrap;
     }
 
     .language-label {
@@ -346,6 +357,15 @@
     .comment { color: #6A9955; }
     .number { color: #B5CEA8; }
     .function { color: #DCDCAA; }
+
+    .message-content p {
+        margin: 0 0 0.5rem 0;
+        line-height: 1.6;
+    }
+
+    .message-content p:last-child {
+        margin-bottom: 0;
+    }
 
     /* Input container */
     .input-container {
@@ -704,32 +724,58 @@
             }, 2000);
         }
 
+        function escapeHtml(unsafe) {
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
         function highlightCode(content) {
-            // Определяем язык программирования
-            const language = content.match(/\`\`\`(\w+)/)?.[1] || '';
+            if (!content) return '';
             
-            // Удаляем маркеры кода
-            content = content.replace(/\`\`\`\w*\n?|\n?\`\`\`/g, '');
+            // Split content into code blocks and regular text
+            const parts = content.split(/(```[\s\S]*?```)/g);
             
-            // Добавляем базовую подсветку синтаксиса
-            content = content
-                .replace(/\b(function|return|const|let|var|if|else|for|while|class)\b/g, '<span class="keyword">$1</span>')
-                .replace(/(".*?"|'.*?'|`.*?`)/g, '<span class="string">$1</span>')
-                .replace(/\/\/.*/g, '<span class="comment">$&</span>')
-                .replace(/\b(\d+)\b/g, '<span class="number">$1</span>')
-                .replace(/\b([A-Za-z]+)(?=\()/g, '<span class="function">$1</span>');
-            
-            // Добавляем метку языка
-            if (language) {
-                content = `<div class="language-label">${language}</div>${content}`;
-            }
-            
-            return content;
+            return parts.map(part => {
+                if (part.startsWith('```') && part.endsWith('```')) {
+                    // Extract language if specified
+                    const match = part.match(/```(\w*)\n([\s\S]*?)```/);
+                    const language = match?.[1] || '';
+                    const code = match?.[2] || '';
+                    
+                    // Escape HTML in code
+                    const escapedCode = escapeHtml(code);
+                    
+                    // Apply syntax highlighting
+                    const highlightedCode = escapedCode
+                        .replace(/\b(function|return|const|let|var|if|else|for|while|class|def|import|from|print)\b/g, '<span class="keyword">$1</span>')
+                        .replace(/(".*?"|'.*?'|`.*?`)/g, '<span class="string">$1</span>')
+                        .replace(/(\#.*$)/gm, '<span class="comment">$1</span>')
+                        .replace(/\b(\d+)\b/g, '<span class="number">$1</span>')
+                        .replace(/\b([A-Za-z]+)(?=\()/g, '<span class="function">$1</span>');
+                    
+                    return `
+                        <div class="code-block">
+                            ${language ? `<div class="language-label">${escapeHtml(language)}</div>` : ''}
+                            <pre><code>${highlightedCode}</code></pre>
+                        </div>
+                    `;
+                }
+                
+                // For regular text, escape HTML and split by newlines
+                const escapedText = escapeHtml(part);
+                return escapedText.split('\n').map(line => 
+                    line.trim() ? `<p>${line}</p>` : '<br>'
+                ).join('');
+            }).join('');
         }
 
         function addMessage(content, isUser = false) {
             const message = {
-                content: isUser ? content : highlightCode(content),
+                content: content,
                 timestamp: new Date().toLocaleTimeString(),
                 isUser: isUser
             };
@@ -746,6 +792,20 @@
             saveHistory();
         }
 
+        function copyMessage(content) {
+            // Remove HTML tags for copying
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = content;
+            const textContent = tempDiv.textContent || tempDiv.innerText || '';
+            
+            navigator.clipboard.writeText(textContent).then(() => {
+                showNotification('Copied to clipboard!');
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+                showNotification('Failed to copy to clipboard');
+            });
+        }
+
         function updateChatDisplay() {
             const chatHistoryDiv = document.getElementById('chatHistory');
             chatHistoryDiv.innerHTML = '';
@@ -757,16 +817,20 @@
                 const contentWrapper = document.createElement('div');
                 contentWrapper.className = 'message-content-wrapper';
                 
+                const formattedContent = message.isUser ? 
+                    `<p>${escapeHtml(message.content)}</p>` : 
+                    highlightCode(message.content);
+                
                 contentWrapper.innerHTML = `
                     <div class="message-header">
                         <span>${message.isUser ? 'You' : 'Claude'}</span>
                         <div class="message-actions">
-                            <button class="btn-icon" onclick="copyMessage('${message.content.replace(/'/g, "\\'")}')">
+                            <button class="btn-icon" onclick="copyMessage('${message.content.replace(/[\\'"]/g, char => '\\' + char)}')">
                                 <i class="fas fa-copy"></i>
                             </button>
                         </div>
                     </div>
-                    <div class="message-content">${message.content}</div>
+                    <div class="message-content">${formattedContent}</div>
                 `;
                 
                 messageDiv.appendChild(contentWrapper);
@@ -774,16 +838,6 @@
             });
 
             chatHistoryDiv.scrollTop = chatHistoryDiv.scrollHeight;
-        }
-
-        function copyMessage(content) {
-            const textarea = document.createElement('textarea');
-            textarea.value = content;
-            document.body.appendChild(textarea);
-            textarea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textarea);
-            showNotification('Copied to clipboard!');
         }
 
         function saveHistory() {
