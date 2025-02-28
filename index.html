@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scale=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Donkey Tapper</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
@@ -11,38 +11,43 @@
             padding: 0;
             box-sizing: border-box;
             user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            font-family: 'Arial', sans-serif;
-            background: #1e1e2e;
-            color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--tg-theme-bg-color, #1e1e2e);
+            color: var(--tg-theme-text-color, #fff);
             height: 100vh;
             overflow: hidden;
         }
 
         .container {
             max-width: 100%;
-            padding: 20px;
+            padding: 16px;
             text-align: center;
         }
 
         .stats {
-            display: flex;
-            justify-content: space-around;
-            padding: 10px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
             margin-bottom: 20px;
         }
 
-        .stat-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+        .stat-box {
+            background: var(--tg-theme-secondary-bg-color, rgba(255, 255, 255, 0.1));
+            padding: 12px;
+            border-radius: 12px;
         }
 
-        .donkey-area {
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 4px;
+        }
+
+        .donkey-container {
             position: relative;
             height: 40vh;
             display: flex;
@@ -51,252 +56,226 @@
         }
 
         #donkey {
-            width: 200px;
-            height: 200px;
+            width: 180px;
+            height: 180px;
             cursor: pointer;
             transition: transform 0.1s;
+            background: var(--tg-theme-button-color, #3390ec);
+            border-radius: 50%;
         }
 
         #donkey:active {
-            transform: scale(0.95);
+            transform: scale(0.92);
         }
 
-        .shop-section {
-            margin-top: 20px;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
+        .progress-container {
+            margin: 20px 0;
+            background: var(--tg-theme-secondary-bg-color, rgba(255, 255, 255, 0.1));
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 20px;
+            background: linear-gradient(90deg, var(--tg-theme-button-color, #3390ec), var(--tg-theme-button-color, #3390ec));
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .shop {
+            background: var(--tg-theme-secondary-bg-color, rgba(255, 255, 255, 0.1));
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .shop-title {
+            margin-bottom: 12px;
+            font-size: 18px;
         }
 
         .shop-items {
-            display: flex;
-            overflow-x: auto;
-            padding: 10px;
-            gap: 15px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px;
         }
 
         .shop-item {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 10px;
-            border-radius: 10px;
-            min-width: 120px;
+            background: var(--tg-theme-bg-color, rgba(0, 0, 0, 0.3));
+            padding: 12px;
+            border-radius: 8px;
             cursor: pointer;
+            transition: transform 0.2s;
         }
 
-        .popup {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.9);
-            padding: 20px;
-            border-radius: 15px;
-            display: none;
+        .shop-item:active {
+            transform: scale(0.95);
         }
 
-        .floating-coin {
+        .coin-popup {
             position: absolute;
-            font-size: 24px;
             pointer-events: none;
-            animation: floatUp 1s ease-out forwards;
+            font-weight: bold;
+            color: gold;
+            animation: floatUp 0.8s ease-out forwards;
         }
 
         @keyframes floatUp {
             0% {
-                transform: translateY(0);
+                transform: translateY(0) scale(1);
                 opacity: 1;
             }
             100% {
-                transform: translateY(-100px);
+                transform: translateY(-50px) scale(1.2);
                 opacity: 0;
             }
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            margin-top: 10px;
-        }
-
-        .progress {
-            height: 100%;
-            background: linear-gradient(90deg, #ff6b6b, #ffd93d);
-            border-radius: 10px;
-            transition: width 0.3s;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="stats">
-            <div class="stat-item">
-                <span>Тапы</span>
-                <span id="tap-count">0</span>
+            <div class="stat-box">
+                <div>Тапы</div>
+                <div id="taps" class="stat-value">0</div>
             </div>
-            <div class="stat-item">
-                <span>Монеты</span>
-                <span id="coin-count">0</span>
+            <div class="stat-box">
+                <div>Монеты</div>
+                <div id="coins" class="stat-value">0</div>
             </div>
-            <div class="stat-item">
-                <span>Множитель</span>
-                <span id="multiplier">x1</span>
+            <div class="stat-box">
+                <div>Множитель</div>
+                <div id="multiplier" class="stat-value">x1</div>
             </div>
         </div>
 
-        <div class="donkey-area">
-            <img id="donkey" src="donkey.png" alt="Donkey">
+        <div class="donkey-container">
+            <div id="donkey">🐴</div>
         </div>
 
-        <div class="progress-bar">
-            <div class="progress" id="tap-progress"></div>
+        <div class="progress-container">
+            <div id="progress" class="progress-bar"></div>
         </div>
 
-        <div class="shop-section">
-            <h2>Магазин</h2>
+        <div class="shop">
+            <div class="shop-title">Магазин</div>
             <div class="shop-items">
-                <div class="shop-item" onclick="buyItem('multiplier')">
-                    <h3>Множитель</h3>
-                    <p>100 монет</p>
+                <div class="shop-item" onclick="buyUpgrade('multiplier')">
+                    <div>Множитель</div>
+                    <div class="shop-item-price">💰 100</div>
                 </div>
-                <div class="shop-item" onclick="buyItem('autoTap')">
-                    <h3>Авто-тап</h3>
-                    <p>200 монет</p>
+                <div class="shop-item" onclick="buyUpgrade('autotap')">
+                    <div>Авто-тап</div>
+                    <div class="shop-item-price">💰 250</div>
                 </div>
-                <div class="shop-item" onclick="buyItem('skin')">
-                    <h3>Скин осла</h3>
-                    <p>500 монет</p>
+                <div class="shop-item" onclick="buyUpgrade('bonus')">
+                    <div>Бонус</div>
+                    <div class="shop-item-price">💰 500</div>
                 </div>
             </div>
         </div>
-    </div>
-
-    <div class="popup" id="milestone-popup">
-        <h2>Достижение!</h2>
-        <p id="milestone-text"></p>
     </div>
 
     <script>
-        let taps = 0;
-        let coins = 0;
-        let multiplier = 1;
-        let tapSound = new Audio('tap.mp3');
-        let milestone = 1000;
-        
-        // Инициализация Telegram WebApp
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        // Проверка, что приложение открыто на мобильном устройстве
+        // Проверка мобильной платформы
         if (!tg.platform.includes('android') && !tg.platform.includes('ios')) {
-            document.body.innerHTML = '<h1>Это приложение доступно только на мобильных устройствах!</h1>';
+            document.body.innerHTML = '<h1 style="text-align:center;padding:20px;">Игра доступна только на мобильных устройствах!</h1>';
             throw new Error('Desktop platform detected');
         }
 
-        document.getElementById('donkey').addEventListener('click', function(e) {
-            taps++;
-            coins += multiplier;
-            updateStats();
-            createFloatingCoin(e);
-            playTapSound();
-            checkMilestone();
-        });
+        let gameState = {
+            taps: 0,
+            coins: 0,
+            multiplier: 1,
+            autoTappers: 0,
+            nextMilestone: 1000
+        };
 
-        function updateStats() {
-            document.getElementById('tap-count').textContent = taps;
-            document.getElementById('coin-count').textContent = coins;
-            document.getElementById('multiplier').textContent = 'x' + multiplier;
-            
-            // Обновление прогресс-бара
-            const progress = (taps % milestone) / milestone * 100;
-            document.getElementById('tap-progress').style.width = progress + '%';
+        // Загрузка сохранённого прогресса
+        const savedState = localStorage.getItem('gameState');
+        if (savedState) {
+            gameState = {...gameState, ...JSON.parse(savedState)};
+            updateUI();
         }
 
-        function createFloatingCoin(e) {
+        function updateUI() {
+            document.getElementById('taps').textContent = gameState.taps;
+            document.getElementById('coins').textContent = gameState.coins;
+            document.getElementById('multiplier').textContent = 'x' + gameState.multiplier;
+            
+            const progress = ((gameState.taps % gameState.nextMilestone) / gameState.nextMilestone) * 100;
+            document.getElementById('progress').style.width = progress + '%';
+        }
+
+        function createFloatingCoin(x, y) {
             const coin = document.createElement('div');
-            coin.className = 'floating-coin';
-            coin.textContent = '+' + multiplier;
-            coin.style.left = e.pageX + 'px';
-            coin.style.top = e.pageY + 'px';
+            coin.className = 'coin-popup';
+            coin.textContent = '+' + gameState.multiplier;
+            coin.style.left = x + 'px';
+            coin.style.top = y + 'px';
             document.body.appendChild(coin);
+            setTimeout(() => coin.remove(), 800);
+        }
+
+        document.getElementById('donkey').addEventListener('click', (e) => {
+            gameState.taps++;
+            gameState.coins += gameState.multiplier;
             
-            setTimeout(() => coin.remove(), 1000);
-        }
+            createFloatingCoin(e.pageX, e.pageY);
 
-        function playTapSound() {
-            tapSound.currentTime = 0;
-            tapSound.play().catch(() => {});
-        }
-
-        function checkMilestone() {
-            if (taps % milestone === 0) {
-                const popup = document.getElementById('milestone-popup');
-                document.getElementById('milestone-text').textContent = 
-                    `Поздравляем! Вы достигли ${taps} тапов!`;
-                popup.style.display = 'block';
-                
-                // Воспроизведение звука осла
-                const donkeySound = new Audio('donkey.mp3');
-                donkeySound.play().catch(() => {});
-                
-                setTimeout(() => {
-                    popup.style.display = 'none';
-                }, 3000);
+            if (gameState.taps % gameState.nextMilestone === 0) {
+                tg.showAlert(`Поздравляем! ${gameState.taps} тапов!`);
             }
-        }
 
-        function buyItem(item) {
-            let cost;
-            switch(item) {
-                case 'multiplier':
-                    cost = 100;
-                    if (coins >= cost) {
-                        coins -= cost;
-                        multiplier++;
-                        updateStats();
-                    }
-                    break;
-                case 'autoTap':
-                    cost = 200;
-                    if (coins >= cost) {
-                        coins -= cost;
-                        setInterval(() => {
-                            taps++;
-                            coins += multiplier;
-                            updateStats();
-                        }, 1000);
-                    }
-                    break;
-                case 'skin':
-                    cost = 500;
-                    if (coins >= cost) {
-                        coins -= cost;
-                        // Здесь можно добавить логику смены скина
-                    }
-                    break;
-            }
-        }
-
-        // Сохранение прогресса
-        window.addEventListener('beforeunload', () => {
-            const gameData = {
-                taps: taps,
-                coins: coins,
-                multiplier: multiplier
-            };
-            localStorage.setItem('gameData', JSON.stringify(gameData));
+            updateUI();
+            localStorage.setItem('gameState', JSON.stringify(gameState));
         });
 
-        // Загрузка сохраненного прогресса
-        const savedData = localStorage.getItem('gameData');
-        if (savedData) {
-            const data = JSON.parse(savedData);
-            taps = data.taps;
-            coins = data.coins;
-            multiplier = data.multiplier;
-            updateStats();
+        function buyUpgrade(type) {
+            const costs = {
+                multiplier: 100,
+                autotap: 250,
+                bonus: 500
+            };
+
+            if (gameState.coins >= costs[type]) {
+                gameState.coins -= costs[type];
+                
+                switch(type) {
+                    case 'multiplier':
+                        gameState.multiplier++;
+                        break;
+                    case 'autotap':
+                        gameState.autoTappers++;
+                        startAutoTapper();
+                        break;
+                    case 'bonus':
+                        gameState.coins += 1000;
+                        break;
+                }
+
+                updateUI();
+                localStorage.setItem('gameState', JSON.stringify(gameState));
+            } else {
+                tg.showAlert('Недостаточно монет!');
+            }
+        }
+
+        function startAutoTapper() {
+            setInterval(() => {
+                gameState.taps++;
+                gameState.coins += gameState.multiplier;
+                updateUI();
+                localStorage.setItem('gameState', JSON.stringify(gameState));
+            }, 1000);
+        }
+
+        // Запуск автотапперов при загрузке
+        for (let i = 0; i < gameState.autoTappers; i++) {
+            startAutoTapper();
         }
     </script>
 </body>
-</html> 
+</html>
