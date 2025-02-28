@@ -154,6 +154,7 @@
             padding: 15px;
             border-radius: 10px;
             animation: fadeIn 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .user-message {
@@ -186,25 +187,42 @@
             padding: 15px;
             border-radius: 6px;
             overflow-x: auto;
+            margin: 10px 0;
         }
 
         .message-content pre {
             margin: 0;
             padding: 0;
+            background-color: transparent;
         }
 
         .message-content code {
             color: #d4d4d4;
             font-size: 14px;
-            line-height: 1.5;
+            line-height: 1.6;
+            display: block;
+            tab-size: 4;
         }
 
-        /* Syntax highlighting colors */
-        .message-content .keyword { color: #569cd6; }
-        .message-content .string { color: #ce9178; }
-        .message-content .comment { color: #6a9955; }
-        .message-content .number { color: #b5cea8; }
-        .message-content .function { color: #dcdcaa; }
+        /* Расширенная подсветка синтаксиса */
+        .message-content .keyword { color: #569cd6; }   /* for, if, function, etc */
+        .message-content .string { color: #ce9178; }    /* "strings" */
+        .message-content .comment { color: #6a9955; }   /* // comments */
+        .message-content .number { color: #b5cea8; }    /* numbers */
+        .message-content .function { color: #dcdcaa; }  /* function names */
+        .message-content .operator { color: #d4d4d4; }  /* +, -, =, => */
+        .message-content .variable { color: #9cdcfe; }  /* variable names */
+        .message-content .class { color: #4ec9b0; }     /* class names */
+        .message-content .constant { color: #4fc1ff; }  /* const values */
+
+        /* Стили для языковой метки */
+        .message-content .language-label {
+            display: block;
+            color: #858585;
+            font-size: 0.85em;
+            margin-bottom: 5px;
+            font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+        }
 
         .input-container {
             background-color: var(--surface-dark);
@@ -680,9 +698,32 @@
             }, 2000);
         }
 
+        function highlightCode(content) {
+            // Определяем язык программирования
+            const language = content.match(/```(\w+)/)?.[1] || '';
+            
+            // Удаляем маркеры кода
+            content = content.replace(/```\w*\n?|\n?```/g, '');
+            
+            // Добавляем базовую подсветку синтаксиса
+            content = content
+                .replace(/\b(function|return|const|let|var|if|else|for|while|class)\b/g, '<span class="keyword">$1</span>')
+                .replace(/(".*?"|'.*?'|`.*?`)/g, '<span class="string">$1</span>')
+                .replace(/\/\/.*/g, '<span class="comment">$&</span>')
+                .replace(/\b(\d+)\b/g, '<span class="number">$1</span>')
+                .replace(/\b([A-Za-z]+)(?=\()/g, '<span class="function">$1</span>');
+            
+            // Добавляем метку языка
+            if (language) {
+                content = `<div class="language-label">${language}</div>${content}`;
+            }
+            
+            return content;
+        }
+
         function addMessage(content, isUser = false) {
             const message = {
-                content: content,
+                content: isUser ? content : highlightCode(content),
                 timestamp: new Date().toLocaleTimeString(),
                 isUser: isUser
             };
