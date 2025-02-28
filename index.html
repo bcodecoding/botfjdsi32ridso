@@ -1,786 +1,302 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat Bot Interface</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link rel="icon" type="image/png" href="https://img.icons8.com/fluency/48/000000/robot.png">
-    <script src="https://js.puter.com/v2/"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scale=no">
+    <title>Donkey Tapper</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        :root {
-            --background-color: #343541;
-            --sidebar-color: #202123;
-            --text-color: #ECECF1;
-            --input-bg: #40414F;
-            --border-color: #4D4D4F;
-            --button-color: #10A37F;
-            --button-hover: #0D8A6C;
-            --sidebar-width: 260px;
-            --message-user-bg: #343541;
-            --message-ai-bg: #444654;
-            --hover-color: #2A2B32;
-        }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            user-select: none;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--background-color);
-            color: var(--text-color);
-            line-height: 1.5;
-        }
-
-        /* Main container */
-        .main-container {
-            display: flex;
-            min-height: 100vh;
-            position: relative;
-        }
-
-        /* Sidebar styles */
-        .sidebar {
-            width: var(--sidebar-width);
-            background-color: var(--sidebar-color);
+            font-family: 'Arial', sans-serif;
+            background: #1e1e2e;
+            color: #fff;
             height: 100vh;
-            position: fixed;
-            top: 0;
-            left: 0;
-            display: flex;
-            flex-direction: column;
-            transition: transform 0.3s ease;
-            z-index: 1000;
-        }
-
-        .sidebar-content {
-            flex: 1;
-            overflow-y: auto;
-            padding: 8px 8px 24px 8px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .sidebar-footer {
-            padding: 12px 16px;
-            border-top: 1px solid var(--border-color);
-            font-size: 0.8rem;
-            color: rgba(255, 255, 255, 0.5);
-        }
-
-        /* Mobile sidebar handling */
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            
-            .sidebar.active {
-                transform: translateX(0);
-            }
-            
-            .chat-container {
-                margin-left: 0 !important;
-                width: 100% !important;
-            }
-        }
-
-        /* Sidebar overlay */
-        .sidebar-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 999;
-            display: none;
-        }
-
-        .sidebar-overlay.active {
-            display: block;
-        }
-
-        /* Mobile top bar */
-        .mobile-top-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 50px;
-            background-color: var(--background-color);
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            padding: 0 15px;
-            z-index: 900;
-            display: none;
-        }
-
-        @media (max-width: 768px) {
-            .mobile-top-bar {
-                display: flex;
-            }
-        }
-
-        .mobile-actions {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-        }
-
-        .menu-toggle {
-            background: transparent;
-            border: none;
-            color: var(--text-color);
-            font-size: 1.2rem;
-            cursor: pointer;
-        }
-
-        /* Brand */
-        .brand {
-            padding: 14px 16px;
-            display: flex;
-            align-items: center;
-            height: 48px;
-        }
-
-        .brand h1 {
-            margin: 0;
-            font-size: 16px;
-            font-weight: 500;
-        }
-
-        /* Chat list */
-        .chat-list {
-            margin-top: 16px;
-            overflow-y: auto;
-            flex: 1;
-        }
-
-        .chat-item {
-            display: flex;
-            align-items: center;
-            margin-bottom: 2px;
-        }
-
-        .chat-button {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 14px;
-            background: transparent;
-            border: none;
-            border-radius: 6px;
-            color: var(--text-color);
-            cursor: pointer;
-            text-align: left;
-            transition: background-color 0.2s;
-            font-size: 14px;
-        }
-
-        .chat-button:hover {
-            background-color: var(--hover-color);
-        }
-
-        .chat-button.active {
-            background-color: var(--hover-color);
-        }
-
-        .chat-text {
-            white-space: nowrap;
             overflow: hidden;
-            text-overflow: ellipsis;
         }
 
-        .delete-chat-btn {
-            background: transparent;
-            border: none;
-            color: rgba(255, 255, 255, 0.5);
-            cursor: pointer;
-            padding: 5px;
-            margin-left: 5px;
-            border-radius: 4px;
-            transition: color 0.2s;
-            opacity: 0;
+        .container {
+            max-width: 100%;
+            padding: 20px;
+            text-align: center;
         }
 
-        .chat-item:hover .delete-chat-btn {
-            opacity: 1;
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            margin-bottom: 20px;
         }
 
-        .delete-chat-btn:hover {
-            color: #ff4d4d;
-        }
-
-        /* Chat container */
-        .chat-container {
-            flex: 1;
-            margin-left: var(--sidebar-width);
+        .stat-item {
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
-            max-width: calc(100% - var(--sidebar-width));
-            width: calc(100% - var(--sidebar-width));
+            align-items: center;
         }
 
-        @media (max-width: 768px) {
-            .chat-container {
-                padding-top: 50px;
-                margin-left: 0;
-                max-width: 100%;
-                width: 100%;
-            }
-        }
-
-        .chat-history {
-            flex: 1;
-            overflow-y: auto;
-            padding-bottom: 120px;
-        }
-
-        /* Message styles */
-        .chat-message {
-            padding: 24px 0;
+        .donkey-area {
             position: relative;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .message-content-wrapper {
-            max-width: 768px;
-            margin: 0 auto;
-            padding: 0 24px;
-        }
-
-        .user-message {
-            background: var(--message-user-bg);
-        }
-
-        .ai-message {
-            background: var(--message-ai-bg);
-        }
-
-        .message-header {
+            height: 40vh;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-            font-weight: 600;
-            font-size: 14px;
-        }
-
-        .message-actions {
-            display: flex;
-            gap: 5px;
-            opacity: 0;
-            transition: opacity 0.2s;
-        }
-
-        .chat-message:hover .message-actions {
-            opacity: 1;
-        }
-
-        .btn-icon {
-            background: transparent;
-            border: none;
-            color: rgba(255, 255, 255, 0.5);
-            cursor: pointer;
-            padding: 5px;
-            border-radius: 4px;
-            transition: color 0.2s;
-        }
-
-        .btn-icon:hover {
-            color: var(--text-color);
-        }
-
-        .message-content {
-            line-height: 1.6;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }
-
-        /* Input container */
-        .input-container {
-            position: fixed;
-            bottom: 0;
-            left: var(--sidebar-width);
-            right: 0;
-            padding: 24px;
-            background: linear-gradient(180deg, rgba(52,53,65,0) 0%, rgba(52,53,65,1) 30%);
-        }
-
-        @media (max-width: 768px) {
-            .input-container {
-                left: 0;
-            }
-        }
-
-        .message-input-wrapper {
-            position: relative;
-            max-width: 768px;
-            margin: 0 auto;
-        }
-
-        textarea {
-            width: 100%;
-            padding: 14px 48px 14px 16px;
-            background: var(--input-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            color: var(--text-color);
-            resize: none;
-            font-size: 16px;
-            line-height: 1.5;
-            box-sizing: border-box;
-            transition: border-color 0.2s;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-
-        textarea:focus {
-            outline: none;
-            border-color: var(--button-color);
-        }
-
-        .send-button {
-            position: absolute;
-            right: 10px;
-            bottom: 10px;
-            background: var(--button-color);
-            border: none;
-            border-radius: 6px;
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
             justify-content: center;
-            cursor: pointer;
-            color: white;
-            transition: background-color 0.2s;
-        }
-
-        .send-button:hover {
-            background-color: var(--button-hover);
-        }
-
-        .send-button:disabled {
-            background-color: #666;
-            cursor: not-allowed;
-        }
-
-        /* Custom buttons */
-        .new-chat-btn {
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 12px 16px;
-            display: flex;
             align-items: center;
-            gap: 12px;
-            color: var(--text-color);
-            background: transparent;
+        }
+
+        #donkey {
+            width: 200px;
+            height: 200px;
             cursor: pointer;
-            transition: background-color 0.2s;
-            margin: 8px 8px 0 8px;
-            font-size: 14px;
+            transition: transform 0.1s;
         }
 
-        .new-chat-btn:hover {
-            background-color: var(--hover-color);
+        #donkey:active {
+            transform: scale(0.95);
         }
 
-        .clear-chat-btn {
+        .shop-section {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+        }
+
+        .shop-items {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            color: rgba(255, 255, 255, 0.5);
-            background: transparent;
-            border: none;
-            cursor: pointer;
-            font-size: 12px;
-            margin-top: 8px;
-            padding: 8px;
-            border-radius: 6px;
-            transition: background-color 0.2s;
+            overflow-x: auto;
+            padding: 10px;
+            gap: 15px;
         }
 
-        .clear-chat-btn:hover {
-            background-color: var(--hover-color);
-            color: var(--text-color);
-        }
-
-        /* Notification */
-        .notification {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: var(--button-color);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 6px;
-            z-index: 1100;
-            animation: fadeIn 0.3s, fadeOut 0.3s 1.7s;
-            font-size: 14px;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes fadeOut {
-            from { opacity: 1; transform: translateY(0); }
-            to { opacity: 0; transform: translateY(20px); }
-        }
-
-        /* Scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: rgba(217, 217, 227, 0.2);
+        .shop-item {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px;
             border-radius: 10px;
+            min-width: 120px;
+            cursor: pointer;
         }
 
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(217, 217, 227, 0.3);
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 20px;
+            border-radius: 15px;
+            display: none;
+        }
+
+        .floating-coin {
+            position: absolute;
+            font-size: 24px;
+            pointer-events: none;
+            animation: floatUp 1s ease-out forwards;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px);
+                opacity: 0;
+            }
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            margin-top: 10px;
+        }
+
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b6b, #ffd93d);
+            border-radius: 10px;
+            transition: width 0.3s;
         }
     </style>
 </head>
 <body>
-    <div class="sidebar-overlay"></div>
+    <div class="container">
+        <div class="stats">
+            <div class="stat-item">
+                <span>Тапы</span>
+                <span id="tap-count">0</span>
+            </div>
+            <div class="stat-item">
+                <span>Монеты</span>
+                <span id="coin-count">0</span>
+            </div>
+            <div class="stat-item">
+                <span>Множитель</span>
+                <span id="multiplier">x1</span>
+            </div>
+        </div>
 
-    <div class="mobile-top-bar">
-        <div class="mobile-actions">
-            <button class="menu-toggle" onclick="toggleSidebar()">
-                <i class="fas fa-bars"></i>
-            </button>
-            <div class="mobile-right-actions">
-                <button class="new-chat-btn" onclick="startNewChat()">
-                    <i class="fas fa-plus"></i>
-                </button>
+        <div class="donkey-area">
+            <img id="donkey" src="donkey.png" alt="Donkey">
+        </div>
+
+        <div class="progress-bar">
+            <div class="progress" id="tap-progress"></div>
+        </div>
+
+        <div class="shop-section">
+            <h2>Магазин</h2>
+            <div class="shop-items">
+                <div class="shop-item" onclick="buyItem('multiplier')">
+                    <h3>Множитель</h3>
+                    <p>100 монет</p>
+                </div>
+                <div class="shop-item" onclick="buyItem('autoTap')">
+                    <h3>Авто-тап</h3>
+                    <p>200 монет</p>
+                </div>
+                <div class="shop-item" onclick="buyItem('skin')">
+                    <h3>Скин осла</h3>
+                    <p>500 монет</p>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="main-container">
-        <div class="sidebar">
-            <div class="sidebar-content">
-                <div class="brand">
-                    <h1>ChatBot</h1>
-                </div>
-                <button class="new-chat-btn" onclick="startNewChat()">
-                    <i class="fas fa-plus"></i>
-                    <span>New chat</span>
-                </button>
-                <div class="chat-list" id="chatList">
-                    <!-- Chat history will be populated here -->
-                </div>
-            </div>
-            <div class="sidebar-footer">
-                <p>ChatBot v1.0</p>
-            </div>
-        </div>
-        
-        <div class="chat-container">
-            <div class="chat-history" id="chatHistory">
-                <!-- Chat messages will be populated here -->
-            </div>
-            
-            <div class="input-container">
-                <div class="message-input-wrapper">
-                    <textarea id="messageInput" rows="1" placeholder="Type a message..."></textarea>
-                    <button class="send-button" id="sendButton" onclick="sendMessage()">
-                        <i class="fas fa-paper-plane"></i>
-                    </button>
-                    <button class="clear-chat-btn" onclick="clearChat()">
-                        <i class="fas fa-trash"></i>
-                        <span>Clear conversation</span>
-                    </button>
-                </div>
-            </div>
-        </div>
+    <div class="popup" id="milestone-popup">
+        <h2>Достижение!</h2>
+        <p id="milestone-text"></p>
     </div>
 
     <script>
-        // Основные переменные чата
-        let allChats = [];
-        let chatHistory = [];
-        let currentChatId = null;
+        let taps = 0;
+        let coins = 0;
+        let multiplier = 1;
+        let tapSound = new Audio('tap.mp3');
+        let milestone = 1000;
+        
+        // Инициализация Telegram WebApp
+        const tg = window.Telegram.WebApp;
+        tg.expand();
 
-        // Функции управления чатом
-        function toggleSidebar() {
-            const sidebar = document.querySelector('.sidebar');
-            const overlay = document.querySelector('.sidebar-overlay');
-            
-            sidebar.classList.toggle('active');
-            overlay.classList.toggle('active');
-            
-            document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : '';
+        // Проверка, что приложение открыто на мобильном устройстве
+        if (!tg.platform.includes('android') && !tg.platform.includes('ios')) {
+            document.body.innerHTML = '<h1>Это приложение доступно только на мобильных устройствах!</h1>';
+            throw new Error('Desktop platform detected');
         }
 
-        function updateChatList() {
-            const chatList = document.getElementById('chatList');
-            chatList.innerHTML = '';
-            
-            allChats.forEach(chat => {
-                const chatItem = document.createElement('div');
-                chatItem.className = 'chat-item';
-                
-                const chatButton = document.createElement('button');
-                chatButton.className = `chat-button ${chat.id === currentChatId ? 'active' : ''}`;
-                chatButton.setAttribute('data-chat-id', chat.id);
-                
-                const firstMessage = chat.messages[0]?.content || 'New Chat';
-                const truncatedMessage = firstMessage.substring(0, 30) + (firstMessage.length > 30 ? '...' : '');
-                
-                chatButton.innerHTML = `
-                    <i class="fas fa-message"></i>
-                    <span class="chat-text">${truncatedMessage}</span>
-                `;
-                
-                const deleteButton = document.createElement('button');
-                deleteButton.className = 'delete-chat-btn';
-                deleteButton.innerHTML = '<i class="fas fa-trash"></i>';
-                deleteButton.onclick = (e) => {
-                    e.stopPropagation();
-                    deleteChat(chat.id);
-                };
-                
-                chatButton.onclick = () => {
-                    loadChat(chat.id);
-                    if (window.innerWidth <= 768) {
-                        toggleSidebar();
-                    }
-                };
-                
-                chatItem.appendChild(chatButton);
-                chatItem.appendChild(deleteButton);
-                chatList.appendChild(chatItem);
-            });
-        }
-
-        function loadChat(chatId) {
-            currentChatId = chatId;
-            const chat = allChats.find(c => c.id === chatId);
-            if (chat) {
-                chatHistory = chat.messages;
-                updateChatDisplay();
-            }
-            updateChatList();
-        }
-
-        function startNewChat() {
-            const newChat = {
-                id: Date.now().toString(),
-                messages: []
-            };
-            
-            allChats.push(newChat);
-            loadChat(newChat.id);
-            saveHistory();
-            showNotification('New chat started!');
-        }
-
-        function deleteChat(chatId) {
-            if (confirm('Are you sure you want to delete this chat?')) {
-                allChats = allChats.filter(chat => chat.id !== chatId);
-                
-                if (chatId === currentChatId) {
-                    if (allChats.length > 0) {
-                        loadChat(allChats[allChats.length - 1].id);
-                    } else {
-                        startNewChat();
-                    }
-                }
-                
-                saveHistory();
-                updateChatList();
-                showNotification('Chat deleted successfully!');
-            }
-        }
-
-        function clearChat() {
-            if (confirm('Are you sure you want to clear the current chat?')) {
-                chatHistory = [];
-                updateChatDisplay();
-                
-                const currentChat = allChats.find(chat => chat.id === currentChatId);
-                if (currentChat) {
-                    currentChat.messages = [];
-                    saveHistory();
-                }
-                
-                showNotification('Chat cleared successfully!');
-            }
-        }
-
-        // Функции сообщений
-        function addMessage(content, isUser = false) {
-            const message = {
-                content: content,
-                timestamp: new Date().toLocaleTimeString(),
-                isUser: isUser
-            };
-            
-            chatHistory.push(message);
-            
-            const currentChat = allChats.find(chat => chat.id === currentChatId);
-            if (currentChat) {
-                currentChat.messages = chatHistory;
-            }
-            
-            updateChatDisplay();
-            updateChatList();
-            saveHistory();
-        }
-
-        function updateChatDisplay() {
-            const chatHistoryDiv = document.getElementById('chatHistory');
-            chatHistoryDiv.innerHTML = '';
-
-            chatHistory.forEach((message) => {
-                const messageDiv = document.createElement('div');
-                messageDiv.className = `chat-message ${message.isUser ? 'user-message' : 'ai-message'}`;
-                
-                const contentWrapper = document.createElement('div');
-                contentWrapper.className = 'message-content-wrapper';
-                
-                contentWrapper.innerHTML = `
-                    <div class="message-header">
-                        <span>${message.isUser ? 'You' : 'Claude'}</span>
-                        <div class="message-actions">
-                            <button class="btn-icon" onclick="copyMessage('${message.content.replace(/'/g, "\\'")}')">
-                                <i class="fas fa-copy"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="message-content">${message.content}</div>
-                `;
-                
-                messageDiv.appendChild(contentWrapper);
-                chatHistoryDiv.appendChild(messageDiv);
-            });
-
-            chatHistoryDiv.scrollTop = chatHistoryDiv.scrollHeight;
-        }
-
-        // Функции хранения
-        function saveHistory() {
-            localStorage.setItem('allChats', JSON.stringify(allChats));
-        }
-
-        function loadHistory() {
-            const saved = localStorage.getItem('allChats');
-            if (saved) {
-                allChats = JSON.parse(saved);
-                updateChatList();
-                
-                if (allChats.length > 0) {
-                    loadChat(allChats[allChats.length - 1].id);
-                } else {
-                    startNewChat();
-                }
-            } else {
-                startNewChat();
-            }
-        }
-
-        // Функции утилит
-        function copyMessage(content) {
-            navigator.clipboard.writeText(content).then(() => {
-                showNotification('Copied to clipboard!');
-            }).catch(err => {
-                console.error('Failed to copy:', err);
-                showNotification('Failed to copy to clipboard');
-            });
-        }
-
-        function showNotification(message) {
-            const notification = document.createElement('div');
-            notification.className = 'notification';
-            notification.textContent = message;
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                document.body.removeChild(notification);
-            }, 2000);
-        }
-
-        // API функции
-        async function sendQuery() {
-            const queryInput = document.getElementById("query");
-            const query = queryInput.value;
-            const submitButton = document.getElementById("submit");
-
-            if (!query.trim()) {
-                showNotification("Please enter a message!");
-                return;
-            }
-
-            addMessage(query, true);
-            queryInput.value = '';
-            submitButton.disabled = true;
-
-            try {
-                const response = await puter.ai.chat(query, {
-                    model: "claude-3-5-sonnet",
-                    stream: true
-                });
-
-                let fullResponse = '';
-                for await (const part of response) {
-                    fullResponse += part?.text || "";
-                }
-
-                addMessage(fullResponse, false);
-
-            } catch (error) {
-                showNotification(`Error: ${error.message}`);
-                addMessage(`Error: ${error.message}`, false);
-            } finally {
-                submitButton.disabled = false;
-            }
-        }
-
-        // Инициализация
-        document.addEventListener('DOMContentLoaded', () => {
-            loadHistory();
-            
-            // Обработчик Enter для отправки
-            document.getElementById('query').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    sendQuery();
-                }
-            });
-            
-            // Авто-размер текстового поля
-            document.getElementById('query').addEventListener('input', function() {
-                this.style.height = 'auto';
-                this.style.height = (this.scrollHeight) + 'px';
-                if (this.scrollHeight > 200) {
-                    this.style.overflowY = 'auto';
-                    this.style.height = '200px';
-                } else {
-                    this.style.overflowY = 'hidden';
-                }
-            });
-            
-            // Обработчик клика по оверлею сайдбара
-            document.querySelector('.sidebar-overlay').addEventListener('click', toggleSidebar);
+        document.getElementById('donkey').addEventListener('click', function(e) {
+            taps++;
+            coins += multiplier;
+            updateStats();
+            createFloatingCoin(e);
+            playTapSound();
+            checkMilestone();
         });
+
+        function updateStats() {
+            document.getElementById('tap-count').textContent = taps;
+            document.getElementById('coin-count').textContent = coins;
+            document.getElementById('multiplier').textContent = 'x' + multiplier;
+            
+            // Обновление прогресс-бара
+            const progress = (taps % milestone) / milestone * 100;
+            document.getElementById('tap-progress').style.width = progress + '%';
+        }
+
+        function createFloatingCoin(e) {
+            const coin = document.createElement('div');
+            coin.className = 'floating-coin';
+            coin.textContent = '+' + multiplier;
+            coin.style.left = e.pageX + 'px';
+            coin.style.top = e.pageY + 'px';
+            document.body.appendChild(coin);
+            
+            setTimeout(() => coin.remove(), 1000);
+        }
+
+        function playTapSound() {
+            tapSound.currentTime = 0;
+            tapSound.play().catch(() => {});
+        }
+
+        function checkMilestone() {
+            if (taps % milestone === 0) {
+                const popup = document.getElementById('milestone-popup');
+                document.getElementById('milestone-text').textContent = 
+                    `Поздравляем! Вы достигли ${taps} тапов!`;
+                popup.style.display = 'block';
+                
+                // Воспроизведение звука осла
+                const donkeySound = new Audio('donkey.mp3');
+                donkeySound.play().catch(() => {});
+                
+                setTimeout(() => {
+                    popup.style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        function buyItem(item) {
+            let cost;
+            switch(item) {
+                case 'multiplier':
+                    cost = 100;
+                    if (coins >= cost) {
+                        coins -= cost;
+                        multiplier++;
+                        updateStats();
+                    }
+                    break;
+                case 'autoTap':
+                    cost = 200;
+                    if (coins >= cost) {
+                        coins -= cost;
+                        setInterval(() => {
+                            taps++;
+                            coins += multiplier;
+                            updateStats();
+                        }, 1000);
+                    }
+                    break;
+                case 'skin':
+                    cost = 500;
+                    if (coins >= cost) {
+                        coins -= cost;
+                        // Здесь можно добавить логику смены скина
+                    }
+                    break;
+            }
+        }
+
+        // Сохранение прогресса
+        window.addEventListener('beforeunload', () => {
+            const gameData = {
+                taps: taps,
+                coins: coins,
+                multiplier: multiplier
+            };
+            localStorage.setItem('gameData', JSON.stringify(gameData));
+        });
+
+        // Загрузка сохраненного прогресса
+        const savedData = localStorage.getItem('gameData');
+        if (savedData) {
+            const data = JSON.parse(savedData);
+            taps = data.taps;
+            coins = data.coins;
+            multiplier = data.multiplier;
+            updateStats();
+        }
     </script>
 </body>
-</html>
+</html> 
