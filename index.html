@@ -3,279 +3,680 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Donkey Tapper</title>
+    <title>OSEL Tapper</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--tg-theme-bg-color, #1e1e2e);
-            color: var(--tg-theme-text-color, #fff);
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        .container {
-            max-width: 100%;
-            padding: 16px;
-            text-align: center;
-        }
-
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .stat-box {
-            background: var(--tg-theme-secondary-bg-color, rgba(255, 255, 255, 0.1));
-            padding: 12px;
-            border-radius: 12px;
-        }
-
-        .stat-value {
-            font-size: 24px;
-            font-weight: bold;
-            margin-top: 4px;
-        }
-
-        .donkey-container {
-            position: relative;
-            height: 40vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        #donkey {
-            width: 180px;
-            height: 180px;
-            cursor: pointer;
-            transition: transform 0.1s;
-            background: var(--tg-theme-button-color, #3390ec);
-            border-radius: 50%;
-        }
-
-        #donkey:active {
-            transform: scale(0.92);
-        }
-
-        .progress-container {
-            margin: 20px 0;
-            background: var(--tg-theme-secondary-bg-color, rgba(255, 255, 255, 0.1));
-            border-radius: 10px;
-            overflow: hidden;
-        }
-
-        .progress-bar {
-            height: 20px;
-            background: linear-gradient(90deg, var(--tg-theme-button-color, #3390ec), var(--tg-theme-button-color, #3390ec));
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-
-        .shop {
-            background: var(--tg-theme-secondary-bg-color, rgba(255, 255, 255, 0.1));
-            border-radius: 12px;
-            padding: 16px;
-        }
-
-        .shop-title {
-            margin-bottom: 12px;
-            font-size: 18px;
-        }
-
-        .shop-items {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 12px;
-        }
-
-        .shop-item {
-            background: var(--tg-theme-bg-color, rgba(0, 0, 0, 0.3));
-            padding: 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .shop-item:active {
-            transform: scale(0.95);
-        }
-
-        .coin-popup {
-            position: absolute;
-            pointer-events: none;
-            font-weight: bold;
-            color: gold;
-            animation: floatUp 0.8s ease-out forwards;
-        }
-
-        @keyframes floatUp {
-            0% {
-                transform: translateY(0) scale(1);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(-50px) scale(1.2);
-                opacity: 0;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
+<style>
+    /* Reset and base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--tg-theme-bg-color, #f5f5f5);
+    color: var(--tg-theme-text-color, #000000);
+    overflow-x: hidden;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.container {
+    max-width: 100%;
+    padding: 16px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Header styles */
+.header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.header h1 {
+    font-size: 28px;
+    margin-bottom: 16px;
+    color: var(--tg-theme-button-color, #2AABEE);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.stats {
+    display: flex;
+    justify-content: space-around;
+    background-color: var(--tg-theme-secondary-bg-color, #e9e9e9);
+    border-radius: 12px;
+    padding: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.stat-label {
+    font-size: 14px;
+    color: var(--tg-theme-hint-color, #999999);
+    margin-bottom: 4px;
+}
+
+.stat-value {
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--tg-theme-text-color, #000000);
+}
+
+/* Game area styles */
+.game-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.donkey-container {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.donkey {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    cursor: pointer;
+    transition: transform 0.1s ease;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.donkey:active {
+    transform: scale(0.95);
+}
+
+.click-effect {
+    position: absolute;
+    font-size: 24px;
+    font-weight: bold;
+    color: #FFD700;
+    text-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.5s ease, opacity 0.5s ease;
+}
+
+.auto-click-indicator {
+    width: 80%;
+    height: 6px;
+    background-color: var(--tg-theme-secondary-bg-color, #e9e9e9);
+    border-radius: 3px;
+    margin-top: 20px;
+    overflow: hidden;
+    display: none;
+}
+
+.auto-click-progress {
+    height: 100%;
+    width: 0;
+    background-color: var(--tg-theme-button-color, #2AABEE);
+    border-radius: 3px;
+    transition: width 1s linear;
+}
+
+/* Shop styles */
+.shop {
+    background-color: var(--tg-theme-secondary-bg-color, #e9e9e9);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.shop h2 {
+    font-size: 20px;
+    margin-bottom: 12px;
+    text-align: center;
+    color: var(--tg-theme-button-color, #2AABEE);
+}
+
+.shop-items {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.shop-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--tg-theme-bg-color, #ffffff);
+    border-radius: 8px;
+    padding: 12px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.shop-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.shop-item:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.shop-item-info {
+    flex: 1;
+}
+
+.shop-item-info h3 {
+    font-size: 16px;
+    margin-bottom: 4px;
+    color: var(--tg-theme-text-color, #000000);
+}
+
+.shop-item-info p {
+    font-size: 12px;
+    color: var(--tg-theme-hint-color, #999999);
+}
+
+.shop-item-price {
+    font-size: 14px;
+    font-weight: bold;
+    color: var(--tg-theme-button-color, #2AABEE);
+    padding: 6px 10px;
+    background-color: rgba(42, 171, 238, 0.1);
+    border-radius: 4px;
+}
+
+/* Footer styles */
+.footer {
+    text-align: center;
+    margin-top: auto;
+    padding-top: 20px;
+}
+
+.website-link {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: var(--tg-theme-button-color, #2AABEE);
+    color: var(--tg-theme-button-text-color, #ffffff);
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 500;
+    margin-bottom: 12px;
+    transition: background-color 0.2s ease;
+}
+
+.website-link:hover {
+    background-color: var(--tg-theme-button-color, #0088cc);
+}
+
+.copyright {
+    font-size: 12px;
+    color: var(--tg-theme-hint-color, #999999);
+}
+
+/* PC Blocker */
+.pc-blocker {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    display: none;
+}
+
+.pc-blocker-content {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    text-align: center;
+    max-width: 80%;
+}
+
+.pc-blocker-content h2 {
+    font-size: 24px;
+    margin-bottom: 16px;
+    color: #2AABEE;
+}
+
+.pc-blocker-content p {
+    font-size: 16px;
+    color: #333333;
+}
+
+/* Animations */
+@keyframes coin-float {
+    0% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+}
+
+/* Responsive adjustments */
+@media (min-width: 768px) {
+    .container {
+        max-width: 500px;
+    }
+    
+    .donkey-container {
+        width: 250px;
+        height: 250px;
+    }
+    
+    .shop-items {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+    
+    .shop-item {
+        flex: 1 1 calc(50% - 6px);
+        min-width: 200px;
+    }
+} 
+</style>
 <body>
     <div class="container">
-        <div class="stats">
-            <div class="stat-box">
-                <div>Тапы</div>
-                <div id="taps" class="stat-value">0</div>
-            </div>
-            <div class="stat-box">
-                <div>Монеты</div>
-                <div id="coins" class="stat-value">0</div>
-            </div>
-            <div class="stat-box">
-                <div>Множитель</div>
-                <div id="multiplier" class="stat-value">x1</div>
+        <div class="header">
+            <h1>OSEL Tapper</h1>
+            <div class="stats">
+                <div class="stat">
+                    <span class="stat-label">Монеты:</span>
+                    <span class="stat-value" id="coins">0</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Клики:</span>
+                    <span class="stat-value" id="clicks">0</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-label">Сила клика:</span>
+                    <span class="stat-value" id="click-power">1</span>
+                </div>
             </div>
         </div>
-
-        <div class="donkey-container">
-            <div id="donkey">🐴</div>
+        
+        <div class="game-area">
+            <div class="donkey-container">
+                <img src="donkey.png" alt="Осел" id="donkey" class="donkey">
+                <div id="click-effect" class="click-effect">+<span id="click-value">1</span></div>
+            </div>
+            
+            <div class="auto-click-indicator" id="auto-click-indicator">
+                <div class="auto-click-progress" id="auto-click-progress"></div>
+            </div>
         </div>
-
-        <div class="progress-container">
-            <div id="progress" class="progress-bar"></div>
-        </div>
-
+        
         <div class="shop">
-            <div class="shop-title">Магазин</div>
+            <h2>Магазин улучшений</h2>
             <div class="shop-items">
-                <div class="shop-item" onclick="buyUpgrade('multiplier')">
-                    <div>Множитель</div>
-                    <div class="shop-item-price">💰 100</div>
+                <div class="shop-item" id="upgrade-click">
+                    <div class="shop-item-info">
+                        <h3>Улучшить силу клика</h3>
+                        <p>Увеличивает количество монет за клик</p>
+                    </div>
+                    <div class="shop-item-price">
+                        <span id="click-upgrade-price">50</span> монет
+                    </div>
                 </div>
-                <div class="shop-item" onclick="buyUpgrade('autotap')">
-                    <div>Авто-тап</div>
-                    <div class="shop-item-price">💰 250</div>
-                </div>
-                <div class="shop-item" onclick="buyUpgrade('bonus')">
-                    <div>Бонус</div>
-                    <div class="shop-item-price">💰 500</div>
+                
+                <div class="shop-item" id="upgrade-auto-click">
+                    <div class="shop-item-info">
+                        <h3>Авто-клик</h3>
+                        <p>Автоматически кликает каждую секунду</p>
+                    </div>
+                    <div class="shop-item-price">
+                        <span id="auto-click-upgrade-price">200</span> монет
+                    </div>
                 </div>
             </div>
+        </div>
+        
+        <div class="footer">
+            <a href="https://bcodecoding.github.io/botfjdsi32ridso/" target="_blank" class="website-link">Посетить наш сайт</a>
+            <p class="copyright">© 2023 OSEL Tapper. Все права защищены.</p>
         </div>
     </div>
-
-    <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
-
-        // Проверка мобильной платформы
-        if (!tg.platform.includes('android') && !tg.platform.includes('ios')) {
-            document.body.innerHTML = '<h1 style="text-align:center;padding:20px;">Игра доступна только на мобильных устройствах!</h1>';
-            throw new Error('Desktop platform detected');
-        }
-
-        let gameState = {
-            taps: 0,
-            coins: 0,
-            multiplier: 1,
-            autoTappers: 0,
-            nextMilestone: 1000
-        };
-
-        // Загрузка сохранённого прогресса
-        const savedState = localStorage.getItem('gameState');
-        if (savedState) {
-            gameState = {...gameState, ...JSON.parse(savedState)};
-            updateUI();
-        }
-
-        function updateUI() {
-            document.getElementById('taps').textContent = gameState.taps;
-            document.getElementById('coins').textContent = gameState.coins;
-            document.getElementById('multiplier').textContent = 'x' + gameState.multiplier;
-            
-            const progress = ((gameState.taps % gameState.nextMilestone) / gameState.nextMilestone) * 100;
-            document.getElementById('progress').style.width = progress + '%';
-        }
-
-        function createFloatingCoin(x, y) {
-            const coin = document.createElement('div');
-            coin.className = 'coin-popup';
-            coin.textContent = '+' + gameState.multiplier;
-            coin.style.left = x + 'px';
-            coin.style.top = y + 'px';
-            document.body.appendChild(coin);
-            setTimeout(() => coin.remove(), 800);
-        }
-
-        document.getElementById('donkey').addEventListener('click', (e) => {
-            gameState.taps++;
-            gameState.coins += gameState.multiplier;
-            
-            createFloatingCoin(e.pageX, e.pageY);
-
-            if (gameState.taps % gameState.nextMilestone === 0) {
-                tg.showAlert(`Поздравляем! ${gameState.taps} тапов!`);
-            }
-
-            updateUI();
-            localStorage.setItem('gameState', JSON.stringify(gameState));
-        });
-
-        function buyUpgrade(type) {
-            const costs = {
-                multiplier: 100,
-                autotap: 250,
-                bonus: 500
-            };
-
-            if (gameState.coins >= costs[type]) {
-                gameState.coins -= costs[type];
-                
-                switch(type) {
-                    case 'multiplier':
-                        gameState.multiplier++;
-                        break;
-                    case 'autotap':
-                        gameState.autoTappers++;
-                        startAutoTapper();
-                        break;
-                    case 'bonus':
-                        gameState.coins += 1000;
-                        break;
-                }
-
-                updateUI();
-                localStorage.setItem('gameState', JSON.stringify(gameState));
-            } else {
-                tg.showAlert('Недостаточно монет!');
-            }
-        }
-
-        function startAutoTapper() {
-            setInterval(() => {
-                gameState.taps++;
-                gameState.coins += gameState.multiplier;
-                updateUI();
-                localStorage.setItem('gameState', JSON.stringify(gameState));
-            }, 1000);
-        }
-
-        // Запуск автотапперов при загрузке
-        for (let i = 0; i < gameState.autoTappers; i++) {
-            startAutoTapper();
-        }
-    </script>
+    
+    <div class="pc-blocker" id="pc-blocker">
+        <div class="pc-blocker-content">
+            <h2>Игра доступна только в Telegram!</h2>
+            <p>Пожалуйста, откройте игру через бота в Telegram.</p>
+        </div>
+    </div>
+    
+    <script src="app.js"></script>
 </body>
-</html>
+<script>
+    // Initialize Telegram WebApp
+const tg = window.Telegram.WebApp;
+tg.expand();
+
+// Game state
+let gameState = {
+    clicks: 0,
+    coins: 0,
+    clickPower: 1,
+    autoClickPower: 0,
+    clickUpgradePrice: 50,
+    autoClickUpgradePrice: 200,
+    clickUpgradePriceMultiplier: 1.5,
+    autoClickUpgradePriceMultiplier: 2,
+    lastSaveTime: Date.now()
+};
+
+// DOM elements
+const donkey = document.getElementById('donkey');
+const clickEffect = document.getElementById('click-effect');
+const clickValue = document.getElementById('click-value');
+const clicksCounter = document.getElementById('clicks');
+const coinsCounter = document.getElementById('coins');
+const clickPowerCounter = document.getElementById('click-power');
+const clickUpgradePrice = document.getElementById('click-upgrade-price');
+const autoClickUpgradePrice = document.getElementById('auto-click-upgrade-price');
+const upgradeClick = document.getElementById('upgrade-click');
+const upgradeAutoClick = document.getElementById('upgrade-auto-click');
+const autoClickIndicator = document.getElementById('auto-click-indicator');
+const autoClickProgress = document.getElementById('auto-click-progress');
+const pcBlocker = document.getElementById('pc-blocker');
+
+// Check if running on PC
+function checkIfPC() {
+    // If not in Telegram WebApp, show PC blocker
+    if (!tg.initDataUnsafe || !tg.initDataUnsafe.user) {
+        pcBlocker.style.display = 'flex';
+    }
+}
+
+// Initialize game
+function initGame() {
+    // Try to load saved state from Telegram WebApp
+    loadGameState();
+    
+    // Update UI
+    updateUI();
+    
+    // Setup auto-click if enabled
+    if (gameState.autoClickPower > 0) {
+        startAutoClick();
+    }
+    
+    // Check if running on PC
+    checkIfPC();
+    
+    // Setup event listeners
+    setupEventListeners();
+}
+
+// Load game state
+function loadGameState() {
+    try {
+        // Try to get data from Telegram WebApp CloudStorage
+        const cloudData = tg.CloudStorage.getItem('gameState');
+        if (cloudData) {
+            const savedState = JSON.parse(cloudData);
+            gameState = { ...gameState, ...savedState };
+            
+            // Calculate offline progress
+            calculateOfflineProgress();
+        }
+    } catch (error) {
+        console.error('Error loading game state:', error);
+    }
+}
+
+// Calculate offline progress
+function calculateOfflineProgress() {
+    const currentTime = Date.now();
+    const timeDiff = (currentTime - gameState.lastSaveTime) / 1000; // in seconds
+    
+    // If auto-click is enabled and time difference is significant
+    if (gameState.autoClickPower > 0 && timeDiff > 10) {
+        const offlineClicks = Math.floor(timeDiff * gameState.autoClickPower / 10);
+        const offlineCoins = offlineClicks * gameState.clickPower;
+        
+        gameState.clicks += offlineClicks;
+        gameState.coins += offlineCoins;
+        
+        // Show offline progress notification
+        tg.showPopup({
+            title: 'Оффлайн прогресс',
+            message: `Пока вас не было, ваш осел заработал ${offlineCoins} монет!`,
+            buttons: [{ type: 'ok' }]
+        });
+    }
+    
+    // Update last save time
+    gameState.lastSaveTime = currentTime;
+}
+
+// Save game state
+function saveGameState() {
+    try {
+        // Update last save time
+        gameState.lastSaveTime = Date.now();
+        
+        // Save to Telegram WebApp CloudStorage
+        tg.CloudStorage.setItem('gameState', JSON.stringify(gameState));
+    } catch (error) {
+        console.error('Error saving game state:', error);
+    }
+}
+
+// Update UI
+function updateUI() {
+    clicksCounter.textContent = gameState.clicks;
+    coinsCounter.textContent = gameState.coins;
+    clickPowerCounter.textContent = gameState.clickPower;
+    clickUpgradePrice.textContent = gameState.clickUpgradePrice;
+    autoClickUpgradePrice.textContent = gameState.autoClickUpgradePrice;
+    clickValue.textContent = gameState.clickPower;
+    
+    // Show/hide auto-click indicator
+    if (gameState.autoClickPower > 0) {
+        autoClickIndicator.style.display = 'block';
+    }
+}
+
+// Setup event listeners
+function setupEventListeners() {
+    // Donkey click
+    donkey.addEventListener('click', handleDonkeyClick);
+    
+    // Upgrade click power
+    upgradeClick.addEventListener('click', handleUpgradeClick);
+    
+    // Upgrade auto-click
+    upgradeAutoClick.addEventListener('click', handleUpgradeAutoClick);
+    
+    // Save game state when closing WebApp
+    tg.onEvent('viewportChanged', saveGameState);
+    window.addEventListener('beforeunload', saveGameState);
+    
+    // Main button click
+    tg.MainButton.onClick(sendDataToBot);
+}
+
+// Handle donkey click
+function handleDonkeyClick() {
+    // Increment clicks and coins
+    gameState.clicks++;
+    gameState.coins += gameState.clickPower;
+    
+    // Update UI
+    updateUI();
+    
+    // Show click effect
+    showClickEffect();
+    
+    // Animate donkey
+    animateDonkey();
+}
+
+// Show click effect
+function showClickEffect() {
+    // Reset animation
+    clickEffect.style.animation = 'none';
+    clickEffect.offsetHeight; // Trigger reflow
+    
+    // Set random position
+    const x = Math.random() * 100 - 50;
+    const y = Math.random() * 50 - 25;
+    clickEffect.style.transform = `translate(${x}px, ${y}px)`;
+    
+    // Show effect
+    clickEffect.style.opacity = '1';
+    clickEffect.style.animation = 'coin-float 0.5s forwards';
+}
+
+// Animate donkey
+function animateDonkey() {
+    donkey.classList.add('clicked');
+    setTimeout(() => {
+        donkey.classList.remove('clicked');
+    }, 100);
+}
+
+// Handle upgrade click
+function handleUpgradeClick() {
+    // Check if player has enough coins
+    if (gameState.coins >= gameState.clickUpgradePrice) {
+        // Deduct coins
+        gameState.coins -= gameState.clickUpgradePrice;
+        
+        // Increase click power
+        gameState.clickPower++;
+        
+        // Increase price for next upgrade
+        gameState.clickUpgradePrice = Math.floor(gameState.clickUpgradePrice * gameState.clickUpgradePriceMultiplier);
+        
+        // Update UI
+        updateUI();
+        
+        // Send data to bot
+        sendUpgradeToBot('click_power', gameState.clickUpgradePrice);
+    } else {
+        // Show not enough coins notification
+        tg.showPopup({
+            title: 'Недостаточно монет',
+            message: `Вам нужно еще ${gameState.clickUpgradePrice - gameState.coins} монет для этого улучшения.`,
+            buttons: [{ type: 'ok' }]
+        });
+    }
+}
+
+// Handle upgrade auto-click
+function handleUpgradeAutoClick() {
+    // Check if player has enough coins
+    if (gameState.coins >= gameState.autoClickUpgradePrice) {
+        // Deduct coins
+        gameState.coins -= gameState.autoClickUpgradePrice;
+        
+        // Increase auto-click power
+        gameState.autoClickPower++;
+        
+        // Increase price for next upgrade
+        gameState.autoClickUpgradePrice = Math.floor(gameState.autoClickUpgradePrice * gameState.autoClickUpgradePriceMultiplier);
+        
+        // Update UI
+        updateUI();
+        
+        // Start auto-click if first upgrade
+        if (gameState.autoClickPower === 1) {
+            startAutoClick();
+        }
+        
+        // Send data to bot
+        sendUpgradeToBot('auto_click', gameState.autoClickUpgradePrice);
+    } else {
+        // Show not enough coins notification
+        tg.showPopup({
+            title: 'Недостаточно монет',
+            message: `Вам нужно еще ${gameState.autoClickUpgradePrice - gameState.coins} монет для этого улучшения.`,
+            buttons: [{ type: 'ok' }]
+        });
+    }
+}
+
+// Start auto-click
+function startAutoClick() {
+    // Show auto-click indicator
+    autoClickIndicator.style.display = 'block';
+    
+    // Start auto-click interval
+    setInterval(() => {
+        // Auto-click animation
+        autoClickProgress.style.width = '0%';
+        
+        // Animate progress bar
+        let progress = 0;
+        const autoClickInterval = setInterval(() => {
+            progress += 1;
+            autoClickProgress.style.width = `${progress}%`;
+            
+            if (progress >= 100) {
+                clearInterval(autoClickInterval);
+                
+                // Add coins from auto-click
+                gameState.clicks += gameState.autoClickPower;
+                gameState.coins += gameState.autoClickPower * gameState.clickPower;
+                
+                // Update UI
+                updateUI();
+            }
+        }, 10);
+    }, 1000);
+}
+
+// Send data to bot
+function sendDataToBot() {
+    const data = {
+        clicks: gameState.clicks,
+        coins: gameState.coins,
+        clickPower: gameState.clickPower,
+        autoClickPower: gameState.autoClickPower
+    };
+    
+    tg.sendData(JSON.stringify(data));
+}
+
+// Send upgrade data to bot
+function sendUpgradeToBot(upgradeType, cost) {
+    const data = {
+        upgrade: upgradeType,
+        cost: cost
+    };
+    
+    tg.sendData(JSON.stringify(data));
+}
+
+// Initialize game when DOM is loaded
+document.addEventListener('DOMContentLoaded', initGame); 
+</script>
+</html> 
