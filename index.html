@@ -2,321 +2,338 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Документация free-sonnetapi</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:400,600&display=swap">
+  <title>docs-nousername — free-sonnetapi</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     :root {
-      --bg: #18181a;
-      --card: #232326;
-      --accent: #ff9800;
+      --bg: #181818;
+      --surface: #232323;
+      --orange: #ff9900;
       --text: #f4f4f4;
-      --muted: #bdbdbd;
-      --border: #29292d;
+      --secondary: #b3b3b3;
+      --border: #292929;
       --radius: 12px;
-      --shadow: 0 4px 24px rgba(0,0,0,0.2);
-      --transition: 0.3s cubic-bezier(.4,0,.2,1);
+      --transition: 0.3s cubic-bezier(0.4,0,0.2,1);
     }
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Inter', sans-serif;
+    html, body {
       margin: 0;
       padding: 0;
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
       min-height: 100vh;
-      transition: background var(--transition), color var(--transition);
+      width: 100vw;
+      overflow-x: hidden;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
     }
     header {
-      background: var(--card);
-      padding: 32px 0 16px 0;
-      box-shadow: var(--shadow);
-      text-align: center;
+      background: var(--surface);
       border-bottom: 1px solid var(--border);
+      padding: 2rem 0 1.5rem 0;
+      text-align: center;
+      box-shadow: 0 2px 12px #0002;
       position: sticky;
       top: 0;
-      z-index: 10;
+      z-index: 99;
       transition: background var(--transition);
     }
-    header h1 {
-      color: var(--accent);
-      font-size: 2.5rem;
-      margin: 0;
-      letter-spacing: 1px;
-      font-weight: 600;
+    .logo {
+      font-weight: 900;
+      font-size: 2.7rem;
+      color: var(--orange);
+      letter-spacing: 0.04em;
+      margin-bottom: 0.2em;
+      user-select: none;
     }
-    header p {
-      color: var(--muted);
-      margin: 8px 0 0 0;
-      font-size: 1.1rem;
+    .subtitle {
+      color: var(--secondary);
+      font-size: 1.2rem;
+      margin-bottom: 0.7em;
     }
     nav {
+      margin: 1.2em 0 0.5em 0;
       display: flex;
       justify-content: center;
-      gap: 32px;
-      margin: 24px 0 0 0;
+      gap: 1.2em;
       flex-wrap: wrap;
     }
     nav a {
-      color: var(--accent);
+      color: var(--orange);
       text-decoration: none;
       font-weight: 600;
-      font-size: 1.05rem;
-      border-radius: 8px;
-      padding: 6px 14px;
+      background: transparent;
+      border-radius: var(--radius);
+      padding: 0.4em 1em;
       transition: background var(--transition), color var(--transition);
     }
     nav a:hover {
-      background: var(--accent);
+      background: var(--orange);
       color: var(--bg);
     }
     main {
+      flex: 1;
       max-width: 900px;
-      margin: 40px auto;
-      background: var(--card);
+      margin: 2.5rem auto 2rem auto;
+      background: var(--surface);
       border-radius: var(--radius);
-      box-shadow: var(--shadow);
-      padding: 40px 28px 32px 28px;
-      animation: fadeIn 0.8s;
+      box-shadow: 0 4px 32px #0003;
+      padding: 2.5rem 2rem 2rem 2rem;
+      animation: fadein 1s;
     }
-    @keyframes fadeIn {
-      0% { opacity: 0; transform: translateY(32px);}
-      100% { opacity: 1; transform: translateY(0);}
+    @keyframes fadein {
+      from { opacity: 0; transform: translateY(30px);}
+      to   { opacity: 1; transform: none;}
     }
-    h2 {
-      color: var(--accent);
-      margin-top: 2.2em;
-      font-size: 1.6rem;
-      font-weight: 600;
-      letter-spacing: 0.5px;
+    h1, h2, h3 {
+      color: var(--orange);
+      font-weight: 800;
+      margin-top: 1.8em;
+      margin-bottom: 0.6em;
+      letter-spacing: 0.01em;
     }
-    h3 {
-      color: var(--text);
-      margin-top: 1.6em;
-      font-size: 1.2rem;
-      font-weight: 600;
+    h1 { font-size: 2.1rem; margin-top: 0;}
+    h2 { font-size: 1.4rem;}
+    h3 { font-size: 1.1rem;}
+    p, ul, ol, pre, code, table {
+      margin-bottom: 1.1em;
+      line-height: 1.7;
     }
     code, pre {
-      background: #1a1a1c;
-      color: var(--accent);
-      border-radius: 6px;
-      font-size: 1rem;
-      padding: 2px 6px;
+      background: #222;
+      color: #ffb84d;
+      border-radius: var(--radius);
+      font-size: 1em;
+      padding: 0.2em 0.4em;
       font-family: 'JetBrains Mono', 'Fira Mono', 'Consolas', monospace;
     }
     pre {
-      display: block;
-      padding: 16px;
-      margin: 18px 0;
+      padding: 1em;
       overflow-x: auto;
-      background: #18181a;
-      color: #ffb74d;
-      border: 1px solid var(--border);
+      font-size: 1.01em;
+      background: #191919;
+      color: #ffe7c2;
     }
     table {
       width: 100%;
       border-collapse: collapse;
-      margin: 18px 0;
-      background: #19191b;
-      border-radius: 8px;
+      margin-bottom: 2em;
+      background: #1a1a1a;
+      border-radius: var(--radius);
       overflow: hidden;
     }
     th, td {
-      padding: 10px 14px;
-      border-bottom: 1px solid var(--border);
+      border: 1px solid var(--border);
+      padding: 0.7em;
       text-align: left;
     }
     th {
-      color: var(--accent);
-      font-weight: 600;
-      background: #232326;
+      background: var(--orange);
+      color: var(--bg);
+      font-weight: 700;
     }
-    tr:last-child td {
-      border-bottom: none;
-    }
-    ul, ol {
-      margin: 0 0 18px 22px;
-    }
-    a {
-      color: var(--accent);
-      transition: color var(--transition);
+    blockquote {
+      border-left: 4px solid var(--orange);
+      background: #222;
+      color: #ffd699;
+      margin: 1.2em 0;
+      padding: 1em 1.5em;
+      border-radius: var(--radius);
+      font-style: italic;
     }
     .tg-links {
-      margin: 36px 0 0 0;
-      text-align: center;
+      display: flex;
+      gap: 1.2em;
+      margin: 2.5em 0 1.5em 0;
+      justify-content: center;
+      flex-wrap: wrap;
     }
-    .tg-link {
-      display: inline-block;
-      margin: 0 12px;
-      background: var(--accent);
+    .tg-links a {
+      background: var(--orange);
       color: var(--bg);
-      font-weight: 600;
-      border-radius: 8px;
-      padding: 10px 24px;
+      font-weight: 700;
+      padding: 0.7em 1.7em;
+      border-radius: var(--radius);
       text-decoration: none;
-      box-shadow: 0 2px 8px rgba(255,152,0,0.08);
+      font-size: 1.12em;
       transition: background var(--transition), color var(--transition), box-shadow var(--transition);
-      font-size: 1.1rem;
+      box-shadow: 0 2px 12px #0004;
     }
-    .tg-link:hover {
-      background: #ffb74d;
-      color: var(--bg);
-      box-shadow: 0 4px 24px rgba(255,152,0,0.18);
-      transform: translateY(-2px) scale(1.04);
+    .tg-links a:hover {
+      background: var(--bg);
+      color: var(--orange);
+      box-shadow: 0 4px 24px #ff990033;
+    }
+    footer {
+      text-align: center;
+      color: var(--secondary);
+      font-size: 1em;
+      padding: 2em 0 1em 0;
+      background: none;
+      border-top: 1px solid var(--border);
+      margin-top: 2em;
     }
     @media (max-width: 600px) {
-      main { padding: 18px 4vw; }
-      header h1 { font-size: 2rem; }
-      nav { gap: 12px; }
+      main { padding: 1.2rem 0.5em;}
+      header { padding: 1.2em 0 1em 0;}
+      .logo { font-size: 1.5rem;}
     }
   </style>
 </head>
 <body>
   <header>
-    <h1>free-sonnetapi</h1>
-    <p>Легковесный API для доступа к Claude 3.5 и 3.7 через Puter.com и DuckAI</p>
+    <div class="logo">docs-nousername</div>
+    <div class="subtitle">Документация по <b>free-sonnetapi</b> — бесплатный API для Claude 3.5/3.7</div>
     <nav>
       <a href="#features">Возможности</a>
       <a href="#quickstart">Быстрый старт</a>
-      <a href="#usage">Примеры использования</a>
-      <a href="#options">Опции</a>
+      <a href="#api">API</a>
+      <a href="#config">Конфигурация</a>
       <a href="#security">Безопасность</a>
-      <a href="#contribute">Вклад</a>
+      <a href="#contrib">Вклад</a>
+      <a href="#links">Контакты</a>
     </nav>
   </header>
   <main>
-    <section id="features">
-      <h2>✨ Возможности</h2>
-      <ul>
-        <li><b>Мульти-модели:</b> поддержка Claude 3.5 Sonnet и Claude 3.7 Sonnet</li>
-        <li><b>Гибкая архитектура:</b> автоматический выбор между Puter.com и DuckAI</li>
-        <li><b>Совместимость с OpenAI API:</b> можно использовать как drop-in замену</li>
-        <li><b>Стриминг:</b> поддержка потоковых ответов в реальном времени</li>
-        <li><b>Нулевая конфигурация:</b> не нужны ключи API или сложная настройка</li>
-        <li><b>Легковесность:</b> Express.js для максимальной производительности</li>
-      </ul>
-    </section>
+    <h1 id="features">✨ Возможности</h1>
+    <ul>
+      <li><b>Мульти-модели:</b> Поддержка Claude 3.5 Sonnet и Claude 3.7 Sonnet</li>
+      <li><b>Гибкие бэкенды:</b> Автоматическое переключение между Puter.com и DuckAI</li>
+      <li><b>Совместимость с OpenAI API:</b> Можно использовать как drop-in замену</li>
+      <li><b>Стриминг:</b> Поддержка потоковой передачи ответов в реальном времени</li>
+      <li><b>Без ключей:</b> Не требует API-ключей или сложной настройки</li>
+      <li><b>Лёгкость:</b> Express.js, высокая производительность</li>
+    </ul>
 
-    <section id="quickstart">
-      <h2>🚀 Быстрый старт</h2>
-      <ol>
-        <li>Клонируйте репозиторий:
-          <pre>git clone https://github.com/andresdevvv/free-sonnetapi.git</pre>
-        </li>
-        <li>Установите зависимости:
-          <pre>cd free-sonnetapi
-npm install</pre>
-        </li>
-        <li>Запустите сервер:
-          <pre>node index.js</pre>
-        </li>
-      </ol>
-      <p>По умолчанию сервер стартует на <b>порт 3032</b>.</p>
-    </section>
+    <h2 id="quickstart">🚀 Быстрый старт</h2>
+    <ol>
+      <li>Клонируйте репозиторий:
+        <pre><code>git clone https://github.com/andresdevvv/free-sonnetapi.git</code></pre>
+      </li>
+      <li>Установите зависимости:
+        <pre><code>cd free-sonnetapi
+npm install</code></pre>
+      </li>
+      <li>Запустите сервер:
+        <pre><code>node index.js</code></pre>
+      </li>
+    </ol>
+    <blockquote>
+      По умолчанию сервер стартует на порту <b>3032</b>.
+    </blockquote>
 
-    <section id="usage">
-      <h2>📝 Примеры использования API</h2>
-      <h3>Базовый запрос</h3>
-      <pre>
-const response = await fetch('http://localhost:3032/v1/chat/completions', {
+    <h2 id="api">📝 Использование API</h2>
+    <h3>Базовый запрос</h3>
+    <pre><code class="language-js">const response = await fetch('http://localhost:3032/v1/chat/completions', {
   method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
+  headers: {
+    'Content-Type': 'application/json'
+  },
   body: JSON.stringify({
     model: "claude3.5", // или "claude3.7"
-    messages: [{ "role": "user", "content": "Write a hello world program in Python" }]
+    messages: [
+      { "role": "user", "content": "Напиши hello world на Python" }
+    ]
   })
 });
-const data = await response.json();
-      </pre>
-      <h3>Расширенные параметры</h3>
-      <pre>
-const response = await fetch('http://localhost:3032/v1/chat/completions', {
+const data = await response.json();</code></pre>
+
+    <h3>Расширенные параметры</h3>
+    <pre><code class="language-js">const response = await fetch('http://localhost:3032/v1/chat/completions', {
   method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
+  headers: {
+    'Content-Type': 'application/json'
+  },
   body: JSON.stringify({
     model: "claude3.7",
     messages: [
-      { "role": "system", "content": "You are a helpful coding assistant" },
-      { "role": "user", "content": "Write a hello world program in Python" }
+      { "role": "system", "content": "Ты — ассистент по программированию" },
+      { "role": "user", "content": "Напиши hello world на Python" }
     ],
     stream: true, // Включить стриминг
-    source: "duckai" // Явный выбор бэкенда
+    source: "duckai" // Явно выбрать бэкенд
   })
-});
-      </pre>
-      <h3>Пример ответа</h3>
-      <pre>
-{
+});</code></pre>
+
+    <h3>Пример ответа</h3>
+    <pre><code>{
   "model": "claude-3-7-sonnet-latest",
-  "content": "Here's a simple Hello World program in Python:\n\nprint('Hello, World!')",
+  "content": "Вот простой Hello World на Python:\n\nprint('Hello, World!')",
   "usage": {
     "prompt_tokens": 24,
     "completion_tokens": 12,
     "total_tokens": 36
   }
-}
-      </pre>
-    </section>
+}</code></pre>
 
-    <section id="options">
-      <h2>🔧 Опции конфигурации</h2>
-      <table>
-        <tr>
-          <th>Опция</th>
-          <th>Описание</th>
-          <th>По умолчанию</th>
-        </tr>
-        <tr>
-          <td><code>PORT</code></td>
-          <td>Порт сервера</td>
-          <td>3032</td>
-        </tr>
-        <tr>
-          <td><code>model</code></td>
-          <td>AI-модель</td>
-          <td>claude3.5</td>
-        </tr>
-        <tr>
-          <td><code>source</code></td>
-          <td>Бэкенд</td>
-          <td>puter</td>
-        </tr>
-        <tr>
-          <td><code>stream</code></td>
-          <td>Потоковый режим</td>
-          <td>false</td>
-        </tr>
-      </table>
-    </section>
+    <h2 id="config">🔧 Конфигурация</h2>
+    <table>
+      <tr>
+        <th>Опция</th>
+        <th>Описание</th>
+        <th>По умолчанию</th>
+      </tr>
+      <tr>
+        <td><code>PORT</code></td>
+        <td>Порт сервера</td>
+        <td>3032</td>
+      </tr>
+      <tr>
+        <td><code>model</code></td>
+        <td>Модель ИИ</td>
+        <td>claude3.5</td>
+      </tr>
+      <tr>
+        <td><code>source</code></td>
+        <td>Бэкенд (puter/duckai)</td>
+        <td>puter</td>
+      </tr>
+      <tr>
+        <td><code>stream</code></td>
+        <td>Стриминг</td>
+        <td>false</td>
+      </tr>
+    </table>
 
-    <section id="security">
-      <h2>⚠️ Безопасность</h2>
-      <ul>
-        <li><b>CORS:</b> по умолчанию отключён, настройте в <code>routes/chat.js</code> при необходимости</li>
-        <li><b>Rate limiting:</b> рекомендуется добавить ограничение запросов для продакшена</li>
-        <li><b>Прокси:</b> используйте обратный прокси (например, Nginx) для продакшена</li>
-      </ul>
-    </section>
+    <h2 id="security">⚠️ Безопасность</h2>
+    <ul>
+      <li><b>CORS:</b> По умолчанию отключён. Настройте в <code>routes/chat.js</code> под свои задачи.</li>
+      <li><b>Ограничение запросов:</b> Для продакшена рекомендуется внедрить rate limiting.</li>
+      <li><b>Прокси:</b> Для продакшена используйте обратный прокси (например, Nginx).</li>
+    </ul>
 
-    <section id="contribute">
-      <h2>🤝 Вклад</h2>
-      <ol>
-        <li>Сделайте форк репозитория</li>
-        <li>Создайте новую ветку: <code>git checkout -b feature/amazing-feature</code></li>
-        <li>Сделайте коммит: <code>git commit -m 'Add amazing feature'</code></li>
-        <li>Запушьте ветку: <code>git push origin feature/amazing-feature</code></li>
-        <li>Откройте Pull Request</li>
-      </ol>
-    </section>
+    <h2 id="contrib">🤝 Вклад</h2>
+    <ol>
+      <li>Сделайте fork репозитория</li>
+      <li>Создайте ветку для своей фичи:
+        <pre><code>git checkout -b feature/amazing-feature</code></pre>
+      </li>
+      <li>Закоммитьте изменения:
+        <pre><code>git commit -m 'Add amazing feature'</code></pre>
+      </li>
+      <li>Отправьте ветку:
+        <pre><code>git push origin feature/amazing-feature</code></pre>
+      </li>
+      <li>Откройте Pull Request</li>
+    </ol>
 
-    <section id="license">
-      <h2>📜 Лицензия</h2>
-      <p>Проект распространяется под лицензией MIT.</p>
-    </section>
-
-    <section class="tg-links">
-      <a class="tg-link" href="https://t.me/nousernameai" target="_blank">Мой Telegram</a>
-      <a class="tg-link" href="https://t.me/+DYJjuEtEL0I3OTFi" target="_blank">Чат Telegram</a>
-    </section>
+    <h2 id="links">📲 Контакты и ссылки</h2>
+    <div class="tg-links">
+      <a href="https://t.me/nousernameai" target="_blank">Мой Telegram</a>
+      <a href="https://t.me/+DYJjuEtEL0I3OTFi" target="_blank">Чат Telegram</a>
+      <a href="https://github.com/AndresDevvv/free-sonnetapi" target="_blank">Исходный код на GitHub</a>
+    </div>
+    <blockquote>
+      <b>free-sonnetapi</b> — простой API для доступа к Claude 3.5/3.7 через Puter.com и DuckAI.<br>
+      <i>Проект с открытым исходным кодом, MIT License.</i>
+    </blockquote>
   </main>
+  <footer>
+    © 2025 docs-nousername | Оформление в стиле Notion, чёрно-оранжевая палитра, плавные анимации
+  </footer>
 </body>
 </html>
